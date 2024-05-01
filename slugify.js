@@ -11,6 +11,3 @@ function createSlug(str) {
 const args = process.argv.slice(2).join(' ');
 
 console.log(createSlug(args));
-
-// Hacker News - Agora para produteiros
-// hacker-news-agora-para-produteiros
