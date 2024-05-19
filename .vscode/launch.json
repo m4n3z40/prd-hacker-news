@@ -5,14 +5,22 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "node",
+      "name": "Start dev server",
+      "args": ["--run", "start"],
       "request": "launch",
-      "name": "Modo depuração",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "program": "${workspaceFolder}/slugify.js",
-      "args": ["News - Agora para produteiros"]
+      "type": "node"
+    },
+    {
+      "name": "Build project",
+      "args": ["--run", "build"],
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
     }
   ]
 }

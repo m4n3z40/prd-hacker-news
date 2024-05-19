@@ -4,7 +4,10 @@
   "description": "Um clone do hacker news com esteroides",
   "main": "index.js",
   "scripts": {
-    "test": "node --test \"**/*.test.mjs\""
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
   },
   "keywords": [
     "hackernews",
@@ -13,8 +16,7 @@
   ],
   "author": "Allan Baptista (allan@beanimus.com)",
   "license": "ISC",
-  "devDependencies": {
-    "@playwright/test": "^1.43.1",
-    "@types/node": "^20.12.7"
+  "dependencies": {
+    "astro": "^4.8.6"
   }
 }
