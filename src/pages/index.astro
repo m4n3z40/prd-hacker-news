@@ -3,15 +3,43 @@
 // is your "component frontmatter". It never runs in the browser.
 console.log('This runs in your terminal, not the browser!');
 ---
-<!-- Below is your "component template." It's just HTML, but with
-     some magic sprinkled in to help you build great templates. -->
 <html>
+  <head>
+    <title>Product Hacker News</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An enhanced clone clone of Hacker News, for Product Hackers.">
+    <meta name="keywords" content="hacker news, product, coding, design, forum, discussion">
+  </head>
   <body>
-    <h1>Hello, World!</h1>
+    <header class="mainHeader">
+      <div class="mainHeader__brand">
+        <a href="/">
+          <img src="/y18.svg" alt="Product Hacker News" />
+          <h3>Product Hacker News</h3>
+        </a>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="/newest">new</a></li>
+          <li><a href="/past">past</a></li>
+          <li><a href="/comments">comments</a></li>
+          <li><a href="/ask">ask</a></li>
+          <li><a href="/show">show</a></li>
+          <li><a href="/jobs">jobs</a></li>
+          <li><a href="/submit">submit</a></li>
+        </ul>
+      </nav>
+      <div class="mainHeader__loginWrapper">
+        <a href="/login">login</a>
+      </div>
+    </header>
   </body>
 </html>
+
 <style>
-  h1 {
-    color: orange;
+  html, body {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 10pt;
+    color: #828282;
   }
 </style>

@@ -2,7 +2,7 @@
 
 # Product Hacker News
 
-A enhanced clone of [Hackernews](https://news.ycombinator.com) for Product Hackers.
+An enhanced clone of [Hackernews](https://news.ycombinator.com) for Product Hackers.
 
 ## Table of Contents
 <details>

@@ -6,3 +6,6 @@ yarn-error.log
 # Astro
 /dist/
 /.astro/
+
+# Mac
+.DS_Store
