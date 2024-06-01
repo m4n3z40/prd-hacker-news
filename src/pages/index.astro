@@ -1,7 +1,31 @@
 ---
-// Welcome to Astro! Everything between these triple-dash code fences
-// is your "component frontmatter". It never runs in the browser.
-console.log('This runs in your terminal, not the browser!');
+import topStories from '../data/top-hn-stories.json';
+
+function timeSince(date) {
+  let seconds = Math.floor((Date.now() - date) / 1000);
+  let interval = seconds / 31536000;
+
+  if (interval > 1) return Math.floor(interval) + " years";
+
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + " months";
+
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + " days";
+
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + " hours";
+
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + " minutes";
+
+  return Math.floor(seconds) + " seconds";
+}
+
+let stories = topStories.slice(0, 30).map(story => Object.assign({}, story, {
+  domain: story.url ? new URL(story.url).hostname : story.url,
+  time_ago: timeSince(new Date(story.time * 1000)),
+}));
 ---
 <html>
   <head>
@@ -37,101 +61,26 @@ console.log('This runs in your terminal, not the browser!');
     </header>
     <main>
       <ol>
-        <!-- Post 1 -->
-        <li class="postSummary">
-          <div class="postSummary__title">
-            <a href="#" class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
-            <div class="postSummary__titleWrapper">
-              <a href="#">
-                <h3>Training my own AI to steal artists' styles</h3>
-              </a>
-              <a href="#" class="postSummary__domain">(julienposture.substack.com)</a>
+        {stories.map(story => (
+          <li class="postSummary">
+            <div class="postSummary__title">
+              <a href="#" class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
+              <div class="postSummary__titleWrapper">
+                <a href={story.url ?? `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>
+                  <h3>{story.title}</h3>
+                </a>
+                <a href="#" class="postSummary__domain">({story.domain})</a>
+              </div>
             </div>
-          </div>
-          <div class="postSummary__meta">
-            <span>24 points</span> by
-            <a href="#">julienposture</a>
-            <a href="#">52 minutes ago</a> |
-            <a href="#">hide</a> |
-            <a href="#">1 comment</a>
-          </div>
-        </li>
-        <!-- Post 2 -->
-        <li class="postSummary">
-          <div class="postSummary__title">
-            <a href="#" class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
-            <div class="postSummary__titleWrapper">
-              <a href="#">
-                <h3>Swarming Proxima Centauri: Picospacecraft Swarms over Interstellar Distances</h3>
-              </a>
-              <a href="#" class="postSummary__domain">(astrobiology.com)</a>
+            <div class="postSummary__meta">
+              <span>{story.score} {story.score === 1 ? 'point' : 'points'} </span> by
+              <a href={`/users/${story.by}`}>{story.by}</a>
+              <a href="#">{story.time_ago} ago</a> |
+              <a href="#">hide</a> |
+              <a href="#">{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
             </div>
-          </div>
-          <div class="postSummary__meta">
-            <span>76 points</span> by
-            <a href="#">Brajeshwar</a>
-            <a href="#">2 hours ago</a> |
-            <a href="#">hide</a> |
-            <a href="#">21 comments</a>
-          </div>
-        </li>
-        <!-- Post 3 -->
-        <li class="postSummary">
-          <div class="postSummary__title">
-            <a href="#" class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
-            <div class="postSummary__titleWrapper">
-              <a href="#">
-                <h3>Compilers for Free with Weval</h3>
-              </a>
-              <a href="#" class="postSummary__domain">(bernsteinbear.com)</a>
-            </div>
-          </div>
-          <div class="postSummary__meta">
-            <span>83 points</span> by
-            <a href="#">todsacerdoti</a>
-            <a href="#">5 hours ago</a> |
-            <a href="#">hide</a> |
-            <a href="#">10 comments</a>
-          </div>
-        </li>
-        <!-- Post 4 -->
-        <li class="postSummary">
-          <div class="postSummary__title">
-            <a href="#" class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
-            <div class="postSummary__titleWrapper">
-              <a href="#">
-                <h3>Transforming a QLC SSD into an SLC SSD</h3>
-              </a>
-              <a href="#" class="postSummary__domain">(theoverclockingpage.com)</a>
-            </div>
-          </div>
-          <div class="postSummary__meta">
-            <span>164 points</span> by
-            <a href="#">userbinator</a>
-            <a href="#">7 hours ago</a> |
-            <a href="#">hide</a> |
-            <a href="#">83 comments</a>
-          </div>
-        </li>
-        <!-- Post 5 -->
-        <li class="postSummary">
-          <div class="postSummary__title">
-            <a href="#" class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
-            <div class="postSummary__titleWrapper">
-              <a href="#">
-                <h3>Riven</h3>
-              </a>
-              <a href="#" class="postSummary__domain">(filfre.net)</a>
-            </div>
-          </div>
-          <div class="postSummary__meta">
-            <span>351 points</span> by
-            <a href="#">doppp</a>
-            <a href="#">13 hours ago</a> |
-            <a href="#">hide</a> |
-            <a href="#">120 comments</a>
-          </div>
-        </li>
+          </li>
+        ))}
       </ol>
       <div class="moreLink">
         <a href="#">More</a>
