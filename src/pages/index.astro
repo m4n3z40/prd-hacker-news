@@ -1,241 +1,41 @@
 ---
+import MainLayout from '../layouts/main.astro';
+import PostSummary from '../components/PostSummary.astro';
+
+import createStory from '../lib/createStory.mjs';
 import topStoriesIds from '../data/top-hn-stories.json';
 import storiesDB from '../data/hn-stories-db.json';
 
-function timeSince(date) {
-  const seconds = Math.floor((Date.now() - date) / 1000);
-  let interval = seconds / 31536000;
-
-  if (interval > 1) return Math.floor(interval) + " years";
-
-  interval = seconds / 2592000;
-  if (interval > 1) return Math.floor(interval) + " months";
-
-  interval = seconds / 86400;
-  if (interval > 1) return Math.floor(interval) + " days";
-
-  interval = seconds / 3600;
-  if (interval > 1) return Math.floor(interval) + " hours";
-
-  interval = seconds / 60;
-  if (interval > 1) return Math.floor(interval) + " minutes";
-
-  return Math.floor(seconds) + " seconds";
-}
-
-let stories = topStoriesIds
+let stories: Story[] = topStoriesIds
   .slice(0, 30)
-  .map(storyId => {
-    const story = storiesDB[storyId];
-
-    return Object.assign({}, story, {
-      domain: story.url ? new URL(story.url).hostname : story.url,
-      time_ago: timeSince(new Date(story.time * 1000)),
-    });
-  });
+  .map(storyId => createStory(storiesDB[storyId]));
 ---
-<html>
-  <head>
-    <title>Product Hacker News</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="An enhanced clone clone of Hacker News, for Product Hackers.">
-    <meta name="keywords" content="hacker news, product, coding, design, forum, discussion">
-  </head>
-  <body>
-    <header class="mainHeader">
-      <a href="/" class="brandImg">
-        <img src="/y18.svg" alt="Product Hacker News" />
-      </a>
-      <div class="navWrapper">
-        <a href="/" class="brandTitle">
-          <h2>Product Hacker News</h2>
-        </a>
-        <nav>
-          <ul>
-            <li><a href="/newest">new</a></li>
-            <li><a href="/past">past</a></li>
-            <li><a href="/comments">comments</a></li>
-            <li><a href="/ask">ask</a></li>
-            <li><a href="/show">show</a></li>
-            <li><a href="/jobs">jobs</a></li>
-            <li><a href="/submit">submit</a></li>
-          </ul>
-        </nav>
-      </div>
-      <div class="loginWrapper">
-        <a href="/login">login</a>
-      </div>
-    </header>
-    <main>
-      <ol>
-        {stories.map(story => (
-          <li class="postSummary">
-            <div class="postSummary__title">
-              <a href="#" class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
-              <div class="postSummary__titleWrapper">
-                <a href={story.url ?? `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>
-                  <h3>{story.title}</h3>
-                </a>
-                {story.domain ? <a href={`/search?site=${story.domain}`} class="postSummary__domain">({story.domain})</a> : null}
-              </div>
-            </div>
-            <div class="postSummary__meta">
-              <span>{story.score} {story.score === 1 ? 'point' : 'points'} </span> by
-              <a href={`/search?user=${story.by}`}>{story.by}</a>
-              <a href={`/items/${story.id}`}>{story.time_ago} ago</a> |
-              <a href="#">hide</a> |
-              <a href={`/items/${story.id}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <div class="moreLink">
-        <a href={`/top/2`}>More</a>
-      </div>
-    </main>
-    <footer class="mainFooter">
-      <div>
-        <nav>
-          <ul>
-            <li><a href="#">Guidelines</a></li>
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Lists</a></li>
-            <li><a href="#">API</a></li>
-            <li><a href="#">Security</a></li>
-            <li><a href="#">Legal</a></li>
-            <li><a href="#">Apply to YC</a></li>
-            <li><a href="#">Contact</a></li>
-          </ul>
-        </nav>
-      </div>
-      <div class="searchWrapper">
-        <label for="mainSearch">Search:</label>
-        <input type="search" id="mainSearch" name="q" />
-      </div>
-    </footer>
-  </body>
-</html>
+<MainLayout>
+  <ol class="storiesTimeline">
+    {stories.map(story => (
+      <li class="storyItem">
+        <PostSummary story={story} />
+      </li>
+    ))}
+  </ol>
+  <div class="moreLink">
+    <a href={`/top/2`}>More</a>
+  </div>
+</MainLayout>
 
 <style>
-  html, body {
-    font-family: Verdana, Geneva, sans-serif;
-    font-size: 10pt;
-    color: #828282;
-    margin: 0;
-  }
-
-  a {
-    color: #000000;
-    text-decoration: none;
-  }
-
-  .mainHeader {
-    background-color: #ff6600;
-    display: flex;
-    align-items: center;
-    padding: 2px;
-  }
-
-  .brandImg > img {
-    border: 1px solid #fff;
-    width: 18px;
-    height: 18px;
-  }
-
-  .navWrapper {
-    margin: 3px 9px;
-  }
-
-  .brandTitle > h2 {
-    font-size: 15px;
-    line-height: 16px;
-    margin: 0;
-  }
-
-  .navWrapper > nav > ul {
-    display: flex;
-    list-style-type: none;
-    padding-left: 0;
-    margin: 0;
-  }
-
-  .navWrapper > nav > ul > li:not(:last-child)::after {
-    content: "|";
-    margin: 0 4px;
-    color: #000000;
-    font-size: 12px;
-  }
-
-  .navWrapper > nav a {
-    font-size: 12px;
-  }
-
-  .loginWrapper {
-    margin-left: auto;
-    margin-right: 10px;
-  }
-
-  main, .mainFooter {
-    background-color: #f6f6ef;
-  }
-
-  main {
-    padding: 12px 0;
-    min-height: calc(100vh - 152px);
-  }
-
-  main > ol {
+  .storiesTimeline {
     margin: 0;
     padding-left: 30px;
     margin-bottom: 15px;
   }
 
-  main > ol > li::marker {
+  .storiesTimeline > li::marker {
     font-size: 15px;
   }
 
-  .postSummary {
-    font-size: 12px;
-  }
-
-  .postSummary:not(:last-child) {
+  .storiesTimeline > li:not(:last-child) {
     margin-bottom: 7px;
-  }
-
-  .postSummary a {
-    color: #828282;
-  }
-
-  .postSummary a:hover {
-    text-decoration: underline;
-  }
-
-  .postSummary__title {
-    display: flex;
-  }
-
-  .postSummary__title h3 {
-    color: #000000;
-    display: inline;
-    font-size: 15px;
-    line-height: 16px;
-    font-weight: normal;
-  }
-
-  .postSummary__titleWrapper {
-    margin-left: 5px;
-  }
-
-  .postSummary__titleWrapper a:has(h3):hover {
-    text-decoration: none;
-  }
-
-  .postSummary__domain {
-    font-size: 11px;
-  }
-
-  .postSummary__meta {
-    padding-left: 18px;
   }
 
   .moreLink {
@@ -245,40 +45,5 @@ let stories = topStoriesIds
   .moreLink > a {
     color: #828282;
     font-size: 15px;
-  }
-
-  .mainFooter {
-    border-top: 2px solid #ff6600;
-    padding: 15px 5px;
-  }
-
-  .mainFooter nav ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    justify-content: center;
-  }
-
-  .mainFooter nav li:not(:last-child)::after {
-    content: "|";
-    margin: 0 4px;
-    color: #000000;
-    font-size: 11px;
-  }
-
-  .mainFooter nav a {
-    font-size: 11px;
-  }
-
-  .searchWrapper {
-    margin-top: 14px;
-    text-align: center;
-  }
-
-  .searchWrapper input[type="search"] {
-    font-size: 16px;
-    padding: 1px 2px;
-    width: 90%;
   }
 </style>

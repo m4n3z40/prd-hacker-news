@@ -1,0 +1,81 @@
+---
+import createStory from "../lib/createStory.mjs";
+
+export interface Props {
+  story: Story;
+  showText?: boolean;
+}
+
+
+const { story: storyData, showText = false } = Astro.props;
+const story = createStory(storyData);
+---
+<div class="postSummary">
+  <div class="postSummary__title">
+    <a href="#" class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
+    {story.title ? (
+      <div class="postSummary__titleWrapper">
+        <a href={story.url ?? `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>
+          <h3>{story.title}</h3>
+        </a>
+        {story.domain ? <a href={`/search?site=${story.domain}`} class="postSummary__domain">({story.domain})</a> : null}
+      </div>
+    ) : null}
+  </div>
+  <div class="postSummary__meta">
+    {story.score ? <span>{story.score} {story.score === 1 ? 'point' : 'points'} by</span> : null}
+    <a href={`/search?user=${story.by}`}>{story.by}</a>
+    <a href={`/items/${story.id}`}>{story.time_ago} ago</a><span> | </span>
+    {story.type !== 'comment' ? <a href="#">hide</a><span> | </span>: null}
+    <a href={`/items/${story.id}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
+  </div>
+  {showText ? <div class="postSummary__text" set:html={story.text}></div> : null}
+</div>
+
+<style>
+  .postSummary {
+    font-size: 12px;
+  }
+
+  .postSummary a {
+    color: #828282;
+  }
+
+  .postSummary a:hover {
+    text-decoration: underline;
+  }
+
+  .postSummary__title {
+    display: flex;
+  }
+
+  .postSummary__title h3 {
+    color: #000000;
+    display: inline;
+    font-size: 15px;
+    line-height: 16px;
+    font-weight: normal;
+  }
+
+  .postSummary__titleWrapper {
+    margin-left: 5px;
+  }
+
+  .postSummary__titleWrapper a:has(h3):hover {
+    text-decoration: none;
+  }
+
+  .postSummary__domain {
+    font-size: 11px;
+  }
+
+  .postSummary__meta {
+    padding-left: 18px;
+  }
+
+  .postSummary__text {
+    font-size: 13px;
+    color: #828282;
+  }
+</style>
+
