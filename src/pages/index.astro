@@ -1,8 +1,9 @@
 ---
-import topStories from '../data/top-hn-stories.json';
+import topStoriesIds from '../data/top-hn-stories.json';
+import storiesDB from '../data/hn-stories-db.json';
 
 function timeSince(date) {
-  let seconds = Math.floor((Date.now() - date) / 1000);
+  const seconds = Math.floor((Date.now() - date) / 1000);
   let interval = seconds / 31536000;
 
   if (interval > 1) return Math.floor(interval) + " years";
@@ -22,10 +23,16 @@ function timeSince(date) {
   return Math.floor(seconds) + " seconds";
 }
 
-let stories = topStories.slice(0, 30).map(story => Object.assign({}, story, {
-  domain: story.url ? new URL(story.url).hostname : story.url,
-  time_ago: timeSince(new Date(story.time * 1000)),
-}));
+let stories = topStoriesIds
+  .slice(0, 30)
+  .map(storyId => {
+    const story = storiesDB[storyId];
+
+    return Object.assign({}, story, {
+      domain: story.url ? new URL(story.url).hostname : story.url,
+      time_ago: timeSince(new Date(story.time * 1000)),
+    });
+  });
 ---
 <html>
   <head>
@@ -69,21 +76,21 @@ let stories = topStories.slice(0, 30).map(story => Object.assign({}, story, {
                 <a href={story.url ?? `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>
                   <h3>{story.title}</h3>
                 </a>
-                <a href="#" class="postSummary__domain">({story.domain})</a>
+                {story.domain ? <a href={`/search?site=${story.domain}`} class="postSummary__domain">({story.domain})</a> : null}
               </div>
             </div>
             <div class="postSummary__meta">
               <span>{story.score} {story.score === 1 ? 'point' : 'points'} </span> by
-              <a href={`/users/${story.by}`}>{story.by}</a>
-              <a href="#">{story.time_ago} ago</a> |
+              <a href={`/search?user=${story.by}`}>{story.by}</a>
+              <a href={`/items/${story.id}`}>{story.time_ago} ago</a> |
               <a href="#">hide</a> |
-              <a href="#">{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
+              <a href={`/items/${story.id}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
             </div>
           </li>
         ))}
       </ol>
       <div class="moreLink">
-        <a href="#">More</a>
+        <a href={`/top/2`}>More</a>
       </div>
     </main>
     <footer class="mainFooter">
