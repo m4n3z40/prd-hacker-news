@@ -62,14 +62,14 @@ An enhanced clone of [Hackernews](https://news.ycombinator.com) for Product Hack
 
 - [x] Install astro
 - [x] Add README, LICENSE and .Editorconfig
-- [ ] Implement Hackernews HTML code
-    - [ ] Mobile screens related code
+- [x] Implement Hackernews HTML code
+    - [x] Mobile screens related code
     - [ ] Desktop screens relatad code
     - [ ] SEO & accessibility
-- [ ] Style with CSS
-    - [ ] Mobile screens related code
+- [x] Style with CSS
+    - [x] Mobile screens related code
     - [ ] Desktop screens relatad code
-- [ ] Make it work with Javascript behaviors
+- [x] Make it work with Javascript behaviors
 - [ ] Make it persist with database
 - [ ] Make it scallable and reliable
 - [ ] Make it secure
