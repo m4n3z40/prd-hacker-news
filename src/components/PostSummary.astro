@@ -29,7 +29,7 @@ const story = createStory(storyData);
     <a href={`/items/${story.id}`}>{story.time_ago} ago</a>
     {story.type !== 'comment' ? <span> | </span><a href="#">hide</a>: null}
     {
-      story.decendants > 0
+      story.descendants > 0
         ? <span> | </span><a href={`/items/${story.id}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
         : null
     }

@@ -2,7 +2,7 @@
 import MainLayout from '../../layouts/main.astro';
 import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
-import PostCommentForm from '../../components/PostCommentForm.astro';
+import CommentForm from '../../components/CommentForm.astro';
 import storiesDB from '../../data/hn-stories-db.json';
 
 export function getStaticPaths() {
@@ -18,7 +18,7 @@ const parentStory = storiesDB[parentID];
 <MainLayout title={`Product Hacker News | Replying to "${parentStory.title}"`}>
   <MainStoryContainer>
     <PostSummary story={parentStory} showText />
-    <PostCommentForm parentID={parentID} submitLabel="reply" />
+    <CommentForm parentID={parentID} submitLabel="reply" />
   </MainStoryContainer>
 </MainLayout>
 

@@ -1,0 +1,67 @@
+---
+import MainLayout from '../layouts/main.astro';
+---
+<MainLayout title="Product Hacker News | Submit new story">
+  <form action="/poststory" method="POST" class="newStoryForm">
+    <div class="newStoryForm__field">
+      <label for="title">title</label>
+      <input type="text" name="title" id="title" required>
+    </div>
+    <div class="newStoryForm__field">
+      <label for="url">url</label>
+      <input type="url" name="url" id="url">
+    </div>
+    <div class="newStoryForm__field">
+      <label for="text">text</label>
+      <textarea name="text" id="text" rows="4" cols="49"></textarea>
+    </div>
+    <div class="newStoryForm__submit">
+      <button type="submit">submit</button>
+    </div>
+  </form>
+  <footer class="newStoryInstructions">
+    Leave url blank to submit a question for discussion.
+    If there is no url, text will appear at the top of the thread.
+    If there is a url, text is optional.
+  </footer>
+</MainLayout>
+
+<style>
+  .newStoryForm {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 4px;
+  }
+
+  .newStoryForm__field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .newStoryForm__field > label {
+    min-width: fit-content;
+    width: 30px;
+  }
+
+  .newStoryForm__field > input, .newStoryForm__field > textarea {
+    flex: 1;
+    max-width: 90%;
+    font-size: 16px;
+  }
+
+  .newStoryForm__submit {
+    margin-left: 30px;
+    margin-top: 5px;
+  }
+
+  .newStoryForm__submit > button {
+    font-size: 14px;
+  }
+
+  .newStoryInstructions {
+    margin-left: 34px;
+    margin-top: 30px;
+  }
+</style>

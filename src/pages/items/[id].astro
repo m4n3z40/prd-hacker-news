@@ -2,7 +2,7 @@
 import MainLayout from '../../layouts/main.astro';
 import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
-import PostCommentForm from '../../components/PostCommentForm.astro';
+import CommentForm from '../../components/CommentForm.astro';
 import CommentTimeline from '../../components/CommentTimeline.astro';
 import storiesDB from '../../data/hn-stories-db.json';
 
@@ -18,7 +18,7 @@ const story = storiesDB[id];
 <MainLayout title={`Product Hacker News | ${story.title}`}>
   <MainStoryContainer>
     <PostSummary story={story} showText />
-    <PostCommentForm parentID={story.id} />
+    <CommentForm parentID={story.id} />
     <CommentTimeline items={story.kids ?? []} getItem={id => storiesDB[id]} />
   </MainStoryContainer>
 </MainLayout>
