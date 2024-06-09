@@ -3,6 +3,7 @@ import MainLayout from '../../layouts/main.astro';
 import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
 import PostCommentForm from '../../components/PostCommentForm.astro';
+import CommentTimeline from '../../components/CommentTimeline.astro';
 import storiesDB from '../../data/hn-stories-db.json';
 
 export function getStaticPaths() {
@@ -13,36 +14,11 @@ export function getStaticPaths() {
 
 const { id } = Astro.params;
 const story = storiesDB[id];
-const kids = story.kids?.map(kid => storiesDB[kid]) || [];
 ---
 <MainLayout title={`Product Hacker News | ${story.title}`}>
   <MainStoryContainer>
     <PostSummary story={story} showText />
     <PostCommentForm parentID={story.id} />
-    {kids.length > 0 ? (
-      <ul class="commentsTimeline">
-        {kids.map((kid) => (
-          <li class="commentItem">
-            <PostSummary story={kid} showText showReplyBtn />
-          </li>
-        ))}
-      </ul>
-    ) : null}
+    <CommentTimeline items={story.kids ?? []} getItem={id => storiesDB[id]} />
   </MainStoryContainer>
 </MainLayout>
-
-<style>
-  .commentsTimeline {
-    list-style-type: none;
-    padding: 0 8px;
-  }
-
-  .commentItem:not(:first-child) {
-    margin-top: 8px;
-  }
-
-  :global(.commentItem .postSummary__text) {
-    font-size: 13px;
-    color: #000000;
-  }
-</style>

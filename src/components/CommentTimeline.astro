@@ -1,0 +1,47 @@
+---
+import PostSummary from './PostSummary.astro';
+
+export interface Props {
+  items: Array<string|number>;
+  getItem: (id:string|number) => Story;
+}
+
+const { items, getItem } = Astro.props;
+---
+{items.length > 0 ? (
+  <ul class="commentsTimeline">
+    {items.map((id) => {
+      const story = getItem(id);
+
+      return (
+        <li class="commentItem">
+          <PostSummary story={story} showText showReplyBtn />
+          {story.kids?.length ? (
+            <Astro.self items={story.kids} getItem={getItem} />
+          ) : null}
+        </li>
+      );
+    })}
+  </ul>
+) : null}
+
+<style>
+  .commentsTimeline {
+    list-style-type: none;
+    padding: 0 8px;
+  }
+
+  .commentItem:not(:first-child) {
+    margin-top: 8px;
+  }
+
+  :global(.commentItem .postSummary__text) {
+    font-size: 13px;
+    color: #000000;
+  }
+
+  .commentItem > .commentsTimeline {
+    padding-left: 18px;
+    margin-top: 8px;
+  }
+</style>
