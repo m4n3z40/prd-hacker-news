@@ -1,0 +1,32 @@
+---
+export interface Props {
+  parentID: string|number;
+  submitLabel?: string;
+}
+
+const { parentID, submitLabel = 'add comment' } = Astro.props;
+---
+<form action={`/postcomment/${parentID}`}>
+  <textarea name="text" rows="8" cols="80" wrap="virtual"></textarea>
+  <input type="submit" name="submit" value={submitLabel} />
+</form>
+
+<style>
+  form {
+    padding: 16px 0 50px 20px;
+  }
+
+  textarea[name="text"] {
+    font-family: monospace;
+    font-size: 16px;
+    resize: both;
+    width: 90%;
+  }
+
+  input[type="submit"] {
+    display: block;
+    margin-top: 16px;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 13px;
+  }
+</style>

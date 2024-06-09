@@ -1,11 +1,12 @@
 ---
 import MainLayout from '../../layouts/main.astro';
+import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
-import topStoriesIds from '../../data/top-hn-stories.json';
+import PostCommentForm from '../../components/PostCommentForm.astro';
 import storiesDB from '../../data/hn-stories-db.json';
 
 export function getStaticPaths() {
-  return topStoriesIds.map((id) => ({
+  return Object.keys(storiesDB).map((id) => ({
     params: { id },
   }));
 }
@@ -15,46 +16,22 @@ const story = storiesDB[id];
 const kids = story.kids?.map(kid => storiesDB[kid]) || [];
 ---
 <MainLayout title={`Product Hacker News | ${story.title}`}>
-  <div class="storyContainer">
+  <MainStoryContainer>
     <PostSummary story={story} showText />
-    <form action="/postcomment">
-      <textarea name="text" rows="8" cols="80" wrap="virtual"></textarea>
-      <input type="submit" name="submit" value="add comment" />
-    </form>
+    <PostCommentForm parentID={story.id} />
     {kids.length > 0 ? (
       <ul class="commentsTimeline">
         {kids.map((kid) => (
           <li class="commentItem">
-            <PostSummary story={kid} showText />
+            <PostSummary story={kid} showText showReplyBtn />
           </li>
         ))}
       </ul>
     ) : null}
-  </div>
+  </MainStoryContainer>
 </MainLayout>
 
 <style>
-  .storyContainer {
-    padding: 0 8px;
-  }
-
-  form {
-    padding: 16px 0 50px 20px;
-  }
-
-  textarea[name="text"] {
-    font-family: monospace;
-    font-size: 16px;
-    resize: both;
-    width: 90%;
-  }
-
-  input[type="submit"] {
-    margin-top: 16px;
-    font-family: Verdana, Geneva, sans-serif;
-    font-size: 13px;
-  }
-
   .commentsTimeline {
     list-style-type: none;
     padding: 0 8px;
@@ -64,18 +41,8 @@ const kids = story.kids?.map(kid => storiesDB[kid]) || [];
     margin-top: 8px;
   }
 
-  :global(.commentItem .postSummary__title) {
-    display: inline-block;
-  }
-
-  :global(.commentItem .postSummary__meta) {
-    display: inline-block;
-    padding-left: 0;
-  }
-
   :global(.commentItem .postSummary__text) {
     font-size: 13px;
     color: #000000;
-    padding-left: 18px;
   }
 </style>

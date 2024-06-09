@@ -4,15 +4,16 @@ import createStory from "../lib/createStory.mjs";
 export interface Props {
   story: Story;
   showText?: boolean;
+  showReplyBtn?: boolean;
 }
 
 
-const { story: storyData, showText = false } = Astro.props;
+const { story: storyData, showText = false, showReplyBtn = false } = Astro.props;
 const story = createStory(storyData);
 ---
-<div class="postSummary">
+<div class="postSummary" id={`post-${story.id}`}>
   <div class="postSummary__title">
-    <a href="#" class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
+    <a href={`/vote/up/${story.id}`} class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
     {story.title ? (
       <div class="postSummary__titleWrapper">
         <a href={story.url ?? `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>
@@ -25,11 +26,16 @@ const story = createStory(storyData);
   <div class="postSummary__meta">
     {story.score ? <span>{story.score} {story.score === 1 ? 'point' : 'points'} by</span> : null}
     <a href={`/search?user=${story.by}`}>{story.by}</a>
-    <a href={`/items/${story.id}`}>{story.time_ago} ago</a><span> | </span>
-    {story.type !== 'comment' ? <a href="#">hide</a><span> | </span>: null}
-    <a href={`/items/${story.id}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
+    <a href={`/items/${story.id}`}>{story.time_ago} ago</a>
+    {story.type !== 'comment' ? <span> | </span><a href="#">hide</a>: null}
+    {
+      story.decendants > 0
+        ? <span> | </span><a href={`/items/${story.id}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
+        : null
+    }
   </div>
   {showText ? <div class="postSummary__text" set:html={story.text}></div> : null}
+  {showReplyBtn ? <div class="postSummary__replyLink"><a href={`/reply/${story.id}`}>reply</a></div> : null}
 </div>
 
 <style>
@@ -69,13 +75,27 @@ const story = createStory(storyData);
     font-size: 11px;
   }
 
-  .postSummary__meta {
+  .postSummary__meta, .postSummary__text, .postSummary__replyLink {
     padding-left: 18px;
+  }
+
+  .postSummary__title:not(:has(.postSummary__titleWrapper)) {
+    display: inline-block;
+  }
+
+  .postSummary__title:not(:has(.postSummary__titleWrapper)) + .postSummary__meta {
+    display: inline-block;
+    padding-left: 0;
   }
 
   .postSummary__text {
     font-size: 13px;
     color: #828282;
+  }
+
+  .postSummary__replyLink > a {
+    font-size: 10px;
+    text-decoration: underline;
   }
 </style>
 

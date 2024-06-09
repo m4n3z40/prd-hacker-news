@@ -1,0 +1,34 @@
+---
+import MainLayout from '../../layouts/main.astro';
+import MainStoryContainer from '../../components/MainStoryContainer.astro';
+import PostSummary from '../../components/PostSummary.astro';
+import PostCommentForm from '../../components/PostCommentForm.astro';
+import storiesDB from '../../data/hn-stories-db.json';
+
+export function getStaticPaths() {
+  const allComments = Object.values(storiesDB).filter((story) => story.type === 'comment');
+  return allComments.map((story) => ({
+    params: { parentID: story.id },
+  }));
+}
+
+const { parentID } = Astro.params;
+const parentStory = storiesDB[parentID];
+---
+<MainLayout title={`Product Hacker News | Replying to "${parentStory.title}"`}>
+  <MainStoryContainer>
+    <PostSummary story={parentStory} showText />
+    <PostCommentForm parentID={parentID} submitLabel="reply" />
+  </MainStoryContainer>
+</MainLayout>
+
+<style>
+  :global(.postSummary__meta) {
+    font-size: 11px !important;
+  }
+
+  :global(.postSummary__text) {
+    font-size: 13px !important;
+    color: #000000 !important;
+  }
+</style>
