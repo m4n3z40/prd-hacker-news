@@ -9,6 +9,7 @@ type Story = {
   by: string;
   time: string;
   descendants: number;
+  parent?: number;
   kids?: number[];
   type: string;
 };

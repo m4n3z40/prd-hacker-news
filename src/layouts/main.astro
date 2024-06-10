@@ -1,9 +1,12 @@
 ---
 export interface Props {
   title?: string;
+  headerTitle?: string;
+  hideNavigation?: boolean;
+  hideLogin?: boolean;
 }
 
-const { title = 'Product Hacker News' } = Astro.props;
+const { title = 'Product Hacker News', headerTitle, hideNavigation, hideLogin } = Astro.props;
 ---
 
 <html>
@@ -15,29 +18,39 @@ const { title = 'Product Hacker News' } = Astro.props;
     <link rel="icon" href="/y18.svg">
   </head>
   <body>
-    <header class="mainHeader">
+    <header class:list={['mainHeader', { mainHeader__hiddenNavigation: hideNavigation, mainHeader__hiddenLogin: hideLogin }]}>
       <a href="/" class="brandImg">
         <img src="/y18.svg" alt="Product Hacker News" />
       </a>
       <div class="navWrapper">
-        <a href="/" class="brandTitle">
-          <h2>Product Hacker News</h2>
-        </a>
-        <nav>
-          <ul>
-            <li><a href="/newest">new</a></li>
-            <li><a href="/past">past</a></li>
-            <li><a href="/comments">comments</a></li>
-            <li><a href="/ask">ask</a></li>
-            <li><a href="/show">show</a></li>
-            <li><a href="/jobs">jobs</a></li>
-            <li><a href="/submit">submit</a></li>
-          </ul>
-        </nav>
+        {headerTitle ? (
+          <div class="brandTitle">
+            <h2>{headerTitle}</h2>
+          </div>
+        ) : (
+          <a href="/" class="brandTitle">
+            <h2>Product Hacker News</h2>
+          </a>
+        )}
+        {!hideNavigation ? (
+          <nav>
+            <ul>
+              <li><a href="/newest">new</a></li>
+              <li><a href="/past">past</a></li>
+              <li><a href="/comments">comments</a></li>
+              <li><a href="/ask">ask</a></li>
+              <li><a href="/show">show</a></li>
+              <li><a href="/jobs">jobs</a></li>
+              <li><a href="/submit">submit</a></li>
+            </ul>
+          </nav>
+        ) : null}
       </div>
-      <div class="loginWrapper">
-        <a href="/login">login</a>
-      </div>
+      {!hideLogin ? (
+        <div class="loginWrapper">
+          <a href="/login">login</a>
+        </div>
+      ) : null}
     </header>
     <main>
       <slot />
@@ -88,6 +101,8 @@ const { title = 'Product Hacker News' } = Astro.props;
     border: 1px solid #fff;
     width: 18px;
     height: 18px;
+    line-height: 0;
+    display: block;
   }
 
   .navWrapper {
@@ -95,6 +110,7 @@ const { title = 'Product Hacker News' } = Astro.props;
   }
 
   .brandTitle > h2 {
+    color: #000000;
     font-size: 15px;
     line-height: 16px;
     margin: 0;
@@ -130,6 +146,10 @@ const { title = 'Product Hacker News' } = Astro.props;
   main {
     padding: 12px 0;
     min-height: calc(100vh - 152px);
+  }
+
+  .mainHeader.mainHeader__hiddenNavigation + main {
+    min-height: calc(100vh - 136px);
   }
 
   .mainFooter {

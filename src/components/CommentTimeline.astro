@@ -4,20 +4,34 @@ import PostSummary from './PostSummary.astro';
 export interface Props {
   items: Array<string|number>;
   getItem: (id:string|number) => Story;
+  rootID?: string|number;
 }
 
-const { items, getItem } = Astro.props;
+const { items, getItem, rootID } = Astro.props;
 ---
 {items.length > 0 ? (
   <ul class="commentsTimeline">
-    {items.map((id) => {
+    {items.map((id, index) => {
       const story = getItem(id);
+      const parentStory = getItem(story.parent)
+      const parentID = parentStory.id;
+      const localRootID = parentStory.type === 'story' ? parentID : rootID;
+      const prevID = items[index - 1];
+      const nextID = items[index + 1];
 
       return (
         <li class="commentItem">
-          <PostSummary story={story} showText showReplyBtn />
+          <PostSummary
+            story={story}
+            rootStoryID={parentID !== localRootID ? localRootID : undefined}
+            parentStoryID={parentID !== localRootID ? parentID : undefined}
+            prevStoryID={prevID}
+            nextStoryID={nextID}
+            showText
+            showReplyBtn
+          />
           {story.kids?.length ? (
-            <Astro.self items={story.kids} getItem={getItem} />
+            <Astro.self items={story.kids} getItem={getItem} rootID={localRootID} />
           ) : null}
         </li>
       );

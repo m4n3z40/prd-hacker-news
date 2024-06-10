@@ -5,11 +5,15 @@ export interface Props {
   story: Story;
   showText?: boolean;
   showReplyBtn?: boolean;
+  rootStoryID?: number|string;
+  parentStoryID?: number|string;
+  prevStoryID?: number|string;
+  nextStoryID?: number|string;
 }
 
-
-const { story: storyData, showText = false, showReplyBtn = false } = Astro.props;
+const { story: storyData, showText = false, showReplyBtn = false, rootStoryID, parentStoryID, prevStoryID, nextStoryID } = Astro.props;
 const story = createStory(storyData);
+const currentPath = Astro.url.pathname;
 ---
 <div class="postSummary" id={`post-${story.id}`}>
   <div class="postSummary__title">
@@ -33,6 +37,10 @@ const story = createStory(storyData);
         ? <span> | </span><a href={`/items/${story.id}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
         : null
     }
+    {rootStoryID ? <span> | </span><a href={`${currentPath}#post-${rootStoryID}`}>root</a> : null}
+    {parentStoryID ? <span> | </span><a href={`${currentPath}#post-${parentStoryID}`}>parent</a> : null}
+    {prevStoryID ? <span> | </span><a href={`${currentPath}#post-${prevStoryID}`}>prev</a> : null}
+    {nextStoryID ? <span> | </span><a href={`${currentPath}#post-${nextStoryID}`}>next</a> : null}
   </div>
   {showText ? <div class="postSummary__text" set:html={story.text}></div> : null}
   {showReplyBtn ? <div class="postSummary__replyLink"><a href={`/reply/${story.id}`}>reply</a></div> : null}

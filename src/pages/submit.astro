@@ -1,7 +1,12 @@
 ---
 import MainLayout from '../layouts/main.astro';
 ---
-<MainLayout title="Product Hacker News | Submit new story">
+<MainLayout
+  title="Product Hacker News | Submit new story"
+  headerTitle="Submit"
+  hideNavigation
+  hideLogin
+>
   <form action="/poststory" method="POST" class="newStoryForm">
     <div class="newStoryForm__field">
       <label for="title">title</label>

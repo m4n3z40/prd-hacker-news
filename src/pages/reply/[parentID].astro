@@ -15,7 +15,12 @@ export function getStaticPaths() {
 const { parentID } = Astro.params;
 const parentStory = storiesDB[parentID];
 ---
-<MainLayout title={`Product Hacker News | Replying to "${parentStory.title}"`}>
+<MainLayout
+  title={`Product Hacker News | Replying to "${parentStory.title}"`}
+  headerTitle="Add Comment"
+  hideNavigation
+  hideLogin
+>
   <MainStoryContainer>
     <PostSummary story={parentStory} showText />
     <CommentForm parentID={parentID} submitLabel="reply" />
