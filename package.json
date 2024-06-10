@@ -17,6 +17,6 @@
   "author": "Allan Baptista (allan@beanimus.com)",
   "license": "ISC",
   "dependencies": {
-    "astro": "^4.8.6"
+    "astro": "^4.10.1"
   }
 }
