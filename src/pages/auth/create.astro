@@ -1,0 +1,31 @@
+---
+import Database from 'better-sqlite3';
+import hashPassword from '../../lib/hashPassword.mjs';
+
+const db = new Database('./src/data/phn.db', { verbose: console.log });
+
+try {
+  const formData = await Astro.request.formData();
+
+  const username = formData.get('username');
+  const password = formData.get('password');
+
+  const user = db
+    .prepare('SELECT id, username, role, created_at FROM users WHERE username = ? AND password = ?')
+    .get(username, hashPassword(password));
+
+  if (!user) {
+    throw new Error('Invalid username or password');
+  }
+
+  Astro.cookies.set('user', user, { maxAge: 60 * 60 * 24 * 30, path: '/' });
+
+  return Astro.redirect('/', 302);
+} catch (error) {
+  console.error(error);
+
+  Astro.cookies.set('flash_error_login', 'Invalid username or password.', { maxAge: 1, path: '/login' });
+
+  return Astro.redirect('/login', 302);
+}
+---

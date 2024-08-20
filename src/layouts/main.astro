@@ -8,6 +8,7 @@ export interface Props {
   hideLogin?: boolean;
 }
 
+const user = Astro.cookies.get('user')?.json();
 const { title = 'Product Hacker News', headerTitle, hideNavigation, hideLogin } = Astro.props;
 ---
 
@@ -49,11 +50,15 @@ const { title = 'Product Hacker News', headerTitle, hideNavigation, hideLogin } 
           </nav>
         ) : null}
       </div>
-      {!hideLogin ? (
+      {!hideLogin && !user ? (
         <div class="loginWrapper">
           <a href="/login">login</a>
         </div>
-      ) : null}
+      ) : (user ? (
+        <div class="logoutWrapper">
+          <a href="/auth/destroy">logout</a>
+        </div>
+      ) : null)}
     </header>
     <main>
       <slot />
@@ -138,7 +143,7 @@ const { title = 'Product Hacker News', headerTitle, hideNavigation, hideLogin } 
     font-size: 12px;
   }
 
-  .loginWrapper {
+  .loginWrapper, .logoutWrapper {
     margin-left: auto;
     margin-right: 10px;
   }
