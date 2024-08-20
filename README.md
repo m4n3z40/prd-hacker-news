@@ -51,6 +51,12 @@ An enhanced clone of [Hackernews](https://news.ycombinator.com) for Product Hack
    ```sh
    npm install
    ```
+
+3. Migrate database
+  ```sh
+   node --run db:migrate
+   ```
+
 3. Run the dev server
    ```sh
    node --run start
@@ -58,19 +64,23 @@ An enhanced clone of [Hackernews](https://news.ycombinator.com) for Product Hack
 
 <p align="right">(<a href="#readme-top">Back to top 👆</a>)</p>
 
+## Database Structure
+
+![Database model structure](src/data/phn.png "Database model structure")
+
 ## Roadmap
 
 - [x] Install astro
 - [x] Add README, LICENSE and .Editorconfig
 - [x] Implement Hackernews HTML code
     - [x] Mobile screens related code
-    - [ ] Desktop screens relatad code
+    - [ ] Desktop screens related code
     - [ ] SEO & accessibility
 - [x] Style with CSS
     - [x] Mobile screens related code
     - [ ] Desktop screens relatad code
 - [x] Make it work with Javascript behaviors
-- [ ] Make it persist with database
+- [x] Make it persist with database
 - [ ] Make it scallable and reliable
 - [ ] Make it secure
 - [ ] Make it distributed Blockchain
