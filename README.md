@@ -53,7 +53,7 @@ An enhanced clone of [Hackernews](https://news.ycombinator.com) for Product Hack
    ```
 
 3. Migrate database
-  ```sh
+   ```sh
    node --run db:migrate
    ```
 
