@@ -45,7 +45,7 @@ const createAccountFlashError = Astro.cookies.get('flash_error_new_account')?.va
         {createAccountFlashError}
       </div>
     )}
-    <form action="/auth/new-account" method="POST">
+    <form action="/users/new" method="POST">
       <div class="createAccountForm__field formField">
         <label for="create-username">username</label>
         <input type="text" id="create-username" name="username" required>

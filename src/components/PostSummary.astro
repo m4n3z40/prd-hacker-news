@@ -20,7 +20,7 @@ const currentPath = Astro.url.pathname;
     <a href={`/vote/up/${story.id}`} class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
     {story.title ? (
       <div class="postSummary__titleWrapper">
-        <a href={story.url ?? `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>
+        <a href={story.url ? story.url : `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>
           <h3>{story.title}</h3>
         </a>
         {story.domain ? <a href={`/search?site=${story.domain}`} class="postSummary__domain">({story.domain})</a> : null}
@@ -28,7 +28,7 @@ const currentPath = Astro.url.pathname;
     ) : null}
   </div>
   <div class="postSummary__meta">
-    {story.score ? <span>{story.score} {story.score === 1 ? 'point' : 'points'} by</span> : null}
+    {!Number.isNaN(story.score) ? <span>{story.score} {story.score === 1 ? 'point' : 'points'} by</span> : null}
     <a href={`/search?user=${story.by}`}>{story.by}</a>
     <a href={`/items/${story.id}`}>{story.time_ago} ago</a>
     {story.type !== 'comment' ? <span> | </span><a href="#">hide</a>: null}

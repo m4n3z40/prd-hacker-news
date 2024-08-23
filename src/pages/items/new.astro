@@ -1,0 +1,35 @@
+---
+import Database from 'better-sqlite3';
+
+const db = new Database('./src/data/phn.db', { verbose: console.log });
+
+const user = Astro.cookies.get('user')?.json();
+
+if (!user) {
+  return Astro.redirect('/');
+}
+
+try {
+  const searchParams = Astro.url.searchParams;
+  const formData = await Astro.request.formData();
+
+  const title = formData.get('title');
+  const url = formData.get('url') as string;
+  const domain = url ? new URL(url).hostname : null;
+  const text = formData.get('text');
+  const parentID = searchParams.has('parentId') ? Number(searchParams.get('parentId')) : null;
+  const type = searchParams.get('type') || 'post';
+
+  const { lastInsertRowid } = db
+    .prepare('INSERT INTO stories (title, url, domain, text, type, user_id, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    .run(title || '', url, domain, text, type, user.id, parentID);
+
+  return Astro.redirect(`/items/${parentID || lastInsertRowid}`);
+} catch (error) {
+  console.error(error);
+
+  Astro.cookies.set('flash_error', 'Could not submit post. Try again later.', { maxAge: 1, path: '/submit' });
+
+  return Astro.redirect('/submit');
+}
+---

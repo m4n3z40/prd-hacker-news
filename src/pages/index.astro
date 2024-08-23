@@ -1,13 +1,21 @@
 ---
+import Database from 'better-sqlite3';
 import MainLayout from '../layouts/main.astro';
 import PostSummary from '../components/PostSummary.astro';
-import createStory from '../lib/createStory.mjs';
-import topStoriesIds from '../data/top-hn-stories.json';
-import storiesDB from '../data/hn-stories-db.json';
 
-let stories: Story[] = topStoriesIds
-  .slice(0, 30)
-  .map(storyId => createStory(storiesDB[storyId]));
+const db = new Database('./src/data/phn.db', { verbose: console.log });
+
+const stories: Story[] = db
+  .prepare(`
+SELECT s.*, u.username AS by, COALESCE(SUM(v.weight), 0) AS score
+FROM stories s
+JOIN users u ON s.user_id = u.id
+LEFT JOIN story_votes v ON s.id = v.story_id
+WHERE s.type = 'post'
+GROUP BY s.id
+ORDER BY created_at DESC
+  `)
+  .all();
 ---
 <MainLayout>
   <ol class="storiesTimeline">

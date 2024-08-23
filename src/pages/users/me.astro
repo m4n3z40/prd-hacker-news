@@ -1,0 +1,33 @@
+---
+import Database from 'better-sqlite3';
+import MainLayout from '../../layouts/main.astro';
+
+const db = new Database('./src/data/phn.db', { verbose: console.log });
+const user = Astro.cookies.get('user')?.json();
+
+if (!user) {
+  return Astro.redirect('/', 302);
+}
+
+const karma = db.prepare('SELECT SUM(weight) as karma FROM story_votes WHERE user_id = ?').get(user.id).karma ?? 0;
+---
+<MainLayout
+  title="Product Hacker News | Your Profile"
+  userKarma={karma}
+  hideLogin
+>
+  <section>
+    <h1>Your Profile</h1>
+    <p>Username: {user.username}</p>
+    <p>Created: {user.created_at}</p>
+    <p>Karma: {karma}</p>
+  </section>
+</MainLayout>
+
+<style>
+  section {
+    margin: 0 auto;
+    max-width: 350px;
+  }
+</style>
+

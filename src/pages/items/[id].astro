@@ -1,24 +1,46 @@
 ---
+import Database from 'better-sqlite3';
 import MainLayout from '../../layouts/main.astro';
 import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 import CommentTimeline from '../../components/CommentTimeline.astro';
-import storiesDB from '../../data/hn-stories-db.json';
 
-export function getStaticPaths() {
-  return Object.keys(storiesDB).map((id) => ({
-    params: { id },
-  }));
-}
+const db = new Database('./src/data/phn.db', { verbose: console.log });
+const user = Astro.cookies.get('user')?.json();
 
 const { id } = Astro.params;
-const story = storiesDB[id];
+
+const story = db.prepare(`
+SELECT s.*, u.username AS by, COALESCE(SUM(v.weight), 0) AS score
+FROM stories s
+JOIN users u ON s.user_id = u.id
+LEFT JOIN story_votes v ON s.id = v.story_id
+WHERE s.id = ?
+  `).get(id);
+const comments = db.prepare(`
+SELECT s.*, u.username AS by, COALESCE(SUM(v.weight), 0) AS score
+FROM stories s
+JOIN users u ON s.user_id = u.id
+LEFT JOIN story_votes v ON s.id = v.story_id
+WHERE s.parent_id = ?
+GROUP BY s.id
+  `).all(id);
+
+const storiesDB = comments
+  .concat([story])
+  .reduce((acc, story) => {
+    acc[story.id] = story;
+    return acc;
+  }, {});
+
+story.kids = comments.map((comment) => comment.id);
+story.descendants = comments.length;
 ---
 <MainLayout title={`Product Hacker News | ${story.title}`}>
   <MainStoryContainer>
     <PostSummary story={story} showText />
-    <CommentForm parentID={story.id} />
+    {user ? <CommentForm parentID={story.id} /> : null}
     <CommentTimeline items={story.kids ?? []} getItem={id => storiesDB[id]} />
   </MainStoryContainer>
 </MainLayout>
