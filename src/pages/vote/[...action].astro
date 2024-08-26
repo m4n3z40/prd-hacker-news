@@ -1,0 +1,36 @@
+---
+import Database from 'better-sqlite3';
+
+const user = Astro.cookies.get('user')?.json();
+
+if (!user) {
+  return Astro.redirect('/');
+}
+
+const db = new Database('./src/data/phn.db', { verbose: console.log });
+
+const from = Astro.url.searchParams.get('from');
+const [action, storyID] = Astro.params.action.split('/');
+
+try {
+  db.prepare(`
+INSERT INTO story_votes (user_id, story_id, weight)
+VALUES (?, ?, ?)
+  `).run(user.id, storyID, action === 'up' ? 1 : -1);
+
+  return Astro.redirect(from, 302);
+} catch (error) {
+  console.error(error);
+
+  switch (error.code) {
+    case 'SQLITE_CONSTRAINT_UNIQUE':
+      Astro.cookies.set('flash_error_vote', 'You have already voted on this story.', { maxAge: 1, path: from });
+      break;
+    default:
+      Astro.cookies.set('flash_error_vote', 'Was not able to register vote. Try again later.', { maxAge: 1, path: from });
+  }
+
+  return Astro.redirect(from, 302);
+}
+---
+

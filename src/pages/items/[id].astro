@@ -1,6 +1,7 @@
 ---
 import Database from 'better-sqlite3';
 import MainLayout from '../../layouts/main.astro';
+import Error from '../../components/Error.astro';
 import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
@@ -36,8 +37,11 @@ const storiesDB = comments
 
 story.kids = comments.map((comment) => comment.id);
 story.descendants = comments.length;
+
+const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---
 <MainLayout title={`Product Hacker News | ${story.title}`}>
+  {flashErrorVote && <Error>{flashErrorVote}</Error>}
   <MainStoryContainer>
     <PostSummary story={story} showText />
     {user ? <CommentForm parentID={story.id} /> : null}

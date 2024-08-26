@@ -37,6 +37,7 @@ const createVotesTable = db.prepare(`
     story_id INTEGER NOT NULL,
     weight DECIMAL NOT NULL DEFAULT 1,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, story_id) ON CLONFLICT ABORT,
     FOREIGN KEY(user_id) REFERENCES users(id),
     FOREIGN KEY(story_id) REFERENCES stories(id)
   );

@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../layouts/main.astro';
+import Error from '../components/Error.astro';
 
 const user = Astro.cookies.get('user')?.json();
 
@@ -16,11 +17,7 @@ const createAccountFlashError = Astro.cookies.get('flash_error_new_account')?.va
 >
   <section class="loginForm">
     <h1>Login</h1>
-    {loginFlashError && (
-      <div class="flashErrorMsg">
-        {loginFlashError}
-      </div>
-    )}
+    {loginFlashError && <Error>{loginFlashError}</Error>}
     <form action="/auth/create" method="POST">
       <div class="loginForm__field formField">
         <label for="username">username</label>
@@ -71,14 +68,6 @@ const createAccountFlashError = Astro.cookies.get('flash_error_new_account')?.va
     margin-top: 20px;
     border-top: 1px dashed #ccc;
     padding-top: 20px;
-  }
-
-  .flashErrorMsg {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
   }
 
   form {

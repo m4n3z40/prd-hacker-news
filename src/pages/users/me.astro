@@ -2,14 +2,15 @@
 import Database from 'better-sqlite3';
 import MainLayout from '../../layouts/main.astro';
 
-const db = new Database('./src/data/phn.db', { verbose: console.log });
 const user = Astro.cookies.get('user')?.json();
 
 if (!user) {
   return Astro.redirect('/', 302);
 }
 
-const karma = db.prepare('SELECT SUM(weight) as karma FROM story_votes WHERE user_id = ?').get(user.id).karma ?? 0;
+const db = new Database('./src/data/phn.db', { verbose: console.log });
+
+const karma = db.prepare('SELECT SUM(weight) as karma FROM story_votes WHERE user_id = ?').get(user.id).karma || 0;
 ---
 <MainLayout
   title="Product Hacker News | Your Profile"

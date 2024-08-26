@@ -1,13 +1,13 @@
 ---
 import Database from 'better-sqlite3';
 
-const db = new Database('./src/data/phn.db', { verbose: console.log });
-
 const user = Astro.cookies.get('user')?.json();
 
 if (!user) {
   return Astro.redirect('/');
 }
+
+const db = new Database('./src/data/phn.db', { verbose: console.log });
 
 try {
   const searchParams = Astro.url.searchParams;

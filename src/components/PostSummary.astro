@@ -17,7 +17,7 @@ const currentPath = Astro.url.pathname;
 ---
 <div class="postSummary" id={`post-${story.id}`}>
   <div class="postSummary__title">
-    <a href={`/vote/up/${story.id}`} class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
+    <a href={`/vote/up/${story.id}?from=${currentPath}`} class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
     {story.title ? (
       <div class="postSummary__titleWrapper">
         <a href={story.url ? story.url : `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>

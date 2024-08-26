@@ -57,7 +57,7 @@ const { title = 'Product Hacker News', headerTitle, hideNavigation, hideLogin, u
         </div>
       ) : (user ? (
         <div class="logoutWrapper">
-          <a href="/users/me">{user.username}</a> {userKarma && ({userKarma})} |
+          <a href="/users/me">{user.username}</a> ({userKarma || 0}) |
           <a href="/auth/destroy">logout</a>
         </div>
       ) : null)}
