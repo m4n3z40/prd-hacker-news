@@ -1,8 +1,5 @@
 ---
-import Database from 'better-sqlite3';
 import hashPassword from '../../lib/hashPassword.mjs';
-
-const db = new Database('./src/data/phn.db', { verbose: console.log });
 
 try {
   const formData = await Astro.request.formData();
@@ -10,7 +7,7 @@ try {
   const username = formData.get('username');
   const password = formData.get('password');
 
-  const user = db
+  const user = Astro.locals.db
     .prepare('SELECT id, username, role, created_at FROM users WHERE username = ? AND password = ?')
     .get(username, hashPassword(password));
 

@@ -1,5 +1,4 @@
 ---
-import Database from 'better-sqlite3';
 import MainLayout from '../../layouts/main.astro';
 import Error from '../../components/Error.astro';
 import MainStoryContainer from '../../components/MainStoryContainer.astro';
@@ -7,9 +6,7 @@ import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 import CommentTimeline from '../../components/CommentTimeline.astro';
 
-const db = new Database('./src/data/phn.db', { verbose: console.log });
-const user = Astro.cookies.get('user')?.json();
-
+const { db, user } = Astro.locals;
 const { id } = Astro.params;
 
 const story = db.prepare(`

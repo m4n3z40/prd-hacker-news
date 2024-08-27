@@ -1,14 +1,11 @@
 ---
-import Database from 'better-sqlite3';
 import MainLayout from '../../layouts/main.astro';
 import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 
-const db = new Database('./src/data/phn.db', { verbose: console.log });
-
 const { parentID } = Astro.params;
-const parentStory = db.prepare('SELECT * FROM stories WHERE id = ?').get(parentID);
+const parentStory = Astro.locals.db.prepare('SELECT * FROM stories WHERE id = ?').get(parentID);
 ---
 <MainLayout
   title={`Product Hacker News | Replying to "${parentStory.title || 'Comment'}"`}

@@ -16,3 +16,20 @@ type Story = {
   type: string;
   created_at: string;
 };
+
+type User = {
+  id: number;
+  username: string;
+  password?: string;
+  role: string;
+  created_at: string;
+  karma?: number;
+};
+
+declare namespace App {
+  interface Locals {
+      db: import('better-sqlite3').Database;
+      user?: User;
+      loggedIn: boolean;
+  }
+}

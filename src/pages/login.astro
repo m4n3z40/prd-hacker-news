@@ -2,10 +2,8 @@
 import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 
-const user = Astro.cookies.get('user')?.json();
-
-if (user) {
-  return Astro.redirect('/');
+if (Astro.locals.loggedIn) {
+  return Astro.redirect('/', 302);
 }
 
 const loginFlashError = Astro.cookies.get('flash_error_login')?.value;

@@ -1,10 +1,13 @@
 ---
-import Database from 'better-sqlite3';
 import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostSummary from '../components/PostSummary.astro';
 
-const db = new Database('./src/data/phn.db', { verbose: console.log });
+const { db } = Astro.locals;
+const list = Astro.url.searchParams.get('list') || 'top';
+const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
+const limit = 30;
+const offset = (page - 1) * limit;
 
 const stories: Story[] = db
   .prepare(`
@@ -18,9 +21,14 @@ JOIN users u ON s.user_id = u.id
 LEFT JOIN stories c ON s.id = c.parent_id
 WHERE s.type = 'post'
 GROUP BY s.id
-ORDER BY score DESC, created_at DESC
+ORDER BY ${list === 'top' ? 'score DESC,' : ''} created_at DESC
+LIMIT ${limit} OFFSET ${offset}
   `)
   .all();
+
+  const totalCount = db
+    .prepare(`SELECT COUNT(*) AS count FROM stories WHERE type = 'post'`)
+    .get().count;
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---
@@ -33,9 +41,11 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
       </li>
     ))}
   </ol>
-  <div class="moreLink">
-    <a href={`/top/2`}>More</a>
-  </div>
+  {offset + limit <= totalCount && (
+    <div class="moreLink">
+      <a href={`/?list=${list}&page=${page + 1}`}>More</a>
+    </div>
+  )}
 </MainLayout>
 
 <style>

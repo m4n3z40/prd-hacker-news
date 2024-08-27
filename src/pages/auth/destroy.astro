@@ -1,9 +1,7 @@
 ---
 import MainLayout from '../../layouts/main.astro';
 
-const user = Astro.cookies.get('user')?.json();
-
-if (!user) {
+if (!Astro.locals.loggedIn) {
   return Astro.redirect('/login', 302);
 }
 

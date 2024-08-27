@@ -6,11 +6,11 @@ export interface Props {
   headerTitle?: string;
   hideNavigation?: boolean;
   hideLogin?: boolean;
-  userKarma?: number;
 }
 
 const user = Astro.cookies.get('user')?.json();
-const { title = 'Product Hacker News', headerTitle, hideNavigation, hideLogin, userKarma } = Astro.props;
+const { title = 'Product Hacker News', headerTitle, hideNavigation, hideLogin } = Astro.props;
+const userKarma = Astro.locals.user?.karma;
 ---
 
 <html>
@@ -40,8 +40,8 @@ const { title = 'Product Hacker News', headerTitle, hideNavigation, hideLogin, u
         {!hideNavigation ? (
           <nav>
             <ul>
-              <li><a href="/newest">new</a></li>
-              <li><a href="/past">past</a></li>
+              <li><a href="/?list=newest">new</a></li>
+              <li><a href="/history">past</a></li>
               <li><a href="/comments">comments</a></li>
               <li><a href="/ask">ask</a></li>
               <li><a href="/show">show</a></li>

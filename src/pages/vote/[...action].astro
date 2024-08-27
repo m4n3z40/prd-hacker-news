@@ -1,13 +1,9 @@
 ---
-import Database from 'better-sqlite3';
+const { loggedIn, db, user } = Astro.locals;
 
-const user = Astro.cookies.get('user')?.json();
-
-if (!user) {
-  return Astro.redirect('/');
+if (!loggedIn) {
+  return Astro.redirect('/login', 302);
 }
-
-const db = new Database('./src/data/phn.db', { verbose: console.log });
 
 const from = Astro.url.searchParams.get('from');
 const [action, storyID] = Astro.params.action.split('/');
