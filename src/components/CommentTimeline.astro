@@ -13,7 +13,7 @@ const { items, getItem, rootID } = Astro.props;
   <ul class="commentsTimeline">
     {items.map((id, index) => {
       const story = getItem(id);
-      const parentStory = getItem(story.parent)
+      const parentStory = getItem(story.parent_id)
       const parentID = parentStory.id;
       const localRootID = parentStory.type === 'story' ? parentID : rootID;
       const prevID = items[index - 1];

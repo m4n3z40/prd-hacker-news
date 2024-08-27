@@ -1,5 +1,11 @@
 ---
 import MainLayout from '../layouts/main.astro';
+
+if (!Astro.locals.loggedIn) {
+  return Astro.redirect('/login', 302);
+}
+
+const flashError = Astro.cookies.get('flash_error')?.value;
 ---
 <MainLayout
   title="Product Hacker News | Submit new story"
@@ -7,7 +13,12 @@ import MainLayout from '../layouts/main.astro';
   hideNavigation
   hideLogin
 >
-  <form action="/poststory" method="POST" class="newStoryForm">
+  {flashError && (
+    <div class="flashErrorMsg">
+      {flashError}
+    </div>
+  )}
+  <form action="/items/new" method="POST" class="newStoryForm">
     <div class="newStoryForm__field">
       <label for="title">title</label>
       <input type="text" name="title" id="title" required>
@@ -32,6 +43,14 @@ import MainLayout from '../layouts/main.astro';
 </MainLayout>
 
 <style>
+  .flashErrorMsg {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+
   .newStoryForm {
     display: flex;
     flex-direction: column;

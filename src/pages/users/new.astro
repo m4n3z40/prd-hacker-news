@@ -1,0 +1,35 @@
+---
+import MainLayout from '../../layouts/main.astro';
+import hashPassword from '../../lib/hashPassword.mjs';
+
+try {
+  const formData = await Astro.request.formData();
+
+  const username = formData.get('username');
+  const password = formData.get('password');
+
+  Astro.locals.db.prepare('INSERT INTO users (username, password) VALUES (?, ?)').run(username, hashPassword(password));
+} catch (error) {
+  console.error(error);
+
+  Astro.cookies.set('flash_error_new_account', 'Was not able to create account. User may already exist.', { maxAge: 1, path: '/login' });
+
+  return Astro.redirect('/login', 302);
+}
+---
+<MainLayout
+  title="Product Hacker News | Account Created"
+  hideLogin
+>
+  <section>
+    <h1>Account Created</h1>
+    <p>Your account has been created. You can now <a href="/login">login</a>.</p>
+  </section>
+</MainLayout>
+
+<style>
+  section {
+    margin: 0 auto;
+    max-width: 350px;
+  }
+</style>

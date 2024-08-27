@@ -1,0 +1,23 @@
+---
+import MainLayout from '../../layouts/main.astro';
+
+if (!Astro.locals.loggedIn) {
+  return Astro.redirect('/login', 302);
+}
+
+Astro.cookies.delete('user', { path: '/' });
+---
+
+<MainLayout title="Product Hacker News | You Have Been Logged Out">
+  <section>
+    <h1>We Logged You Out</h1>
+    <p>Please, come again. You can now <a href="/">consume posts</a> anonymously.</p>
+  </section>
+</MainLayout>
+
+<style>
+  section {
+    margin: 0 auto;
+    max-width: 350px;
+  }
+</style>

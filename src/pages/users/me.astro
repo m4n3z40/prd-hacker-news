@@ -1,0 +1,28 @@
+---
+import MainLayout from '../../layouts/main.astro';
+
+if (!Astro.locals.loggedIn) {
+  return Astro.redirect('/login', 302);
+}
+
+const { user } = Astro.locals;
+---
+<MainLayout
+  title="Product Hacker News | Your Profile"
+  hideLogin
+>
+  <section>
+    <h1>Your Profile</h1>
+    <p>Username: {user.username}</p>
+    <p>Created: {user.created_at}</p>
+    <p>Karma: {user.karma}</p>
+  </section>
+</MainLayout>
+
+<style>
+  section {
+    margin: 0 auto;
+    max-width: 350px;
+  }
+</style>
+

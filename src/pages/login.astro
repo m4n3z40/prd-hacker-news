@@ -1,5 +1,13 @@
 ---
 import MainLayout from '../layouts/main.astro';
+import Error from '../components/Error.astro';
+
+if (Astro.locals.loggedIn) {
+  return Astro.redirect('/', 302);
+}
+
+const loginFlashError = Astro.cookies.get('flash_error_login')?.value;
+const createAccountFlashError = Astro.cookies.get('flash_error_new_account')?.value;
 ---
 <MainLayout
   title="Product Hacker News | Login or Create Account"
@@ -7,7 +15,8 @@ import MainLayout from '../layouts/main.astro';
 >
   <section class="loginForm">
     <h1>Login</h1>
-    <form action="/authenticate" method="POST">
+    {loginFlashError && <Error>{loginFlashError}</Error>}
+    <form action="/auth/create" method="POST">
       <div class="loginForm__field formField">
         <label for="username">username</label>
         <input type="text" id="username" name="username" required>
@@ -26,7 +35,12 @@ import MainLayout from '../layouts/main.astro';
   </section>
   <section class="createAccountForm">
     <h1>Create Account</h1>
-    <form action="/create-account" method="POST">
+    {createAccountFlashError && (
+      <div class="flashErrorMsg">
+        {createAccountFlashError}
+      </div>
+    )}
+    <form action="/users/new" method="POST">
       <div class="createAccountForm__field formField">
         <label for="create-username">username</label>
         <input type="text" id="create-username" name="username" required>

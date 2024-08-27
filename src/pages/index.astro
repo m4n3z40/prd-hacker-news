@@ -1,15 +1,39 @@
 ---
 import MainLayout from '../layouts/main.astro';
+import Error from '../components/Error.astro';
 import PostSummary from '../components/PostSummary.astro';
-import createStory from '../lib/createStory.mjs';
-import topStoriesIds from '../data/top-hn-stories.json';
-import storiesDB from '../data/hn-stories-db.json';
 
-let stories: Story[] = topStoriesIds
-  .slice(0, 30)
-  .map(storyId => createStory(storiesDB[storyId]));
+const { db } = Astro.locals;
+const list = Astro.url.searchParams.get('list') || 'top';
+const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
+const limit = 30;
+const offset = (page - 1) * limit;
+
+const stories: Story[] = db
+  .prepare(`
+SELECT
+	s.*,
+	u.username AS by,
+	COUNT(c.id) AS descendants,
+	(SELECT COALESCE(SUM(weight), 0) FROM story_votes WHERE story_id = s.id) AS score
+FROM stories s
+JOIN users u ON s.user_id = u.id
+LEFT JOIN stories c ON s.id = c.parent_id
+WHERE s.type = 'post'
+GROUP BY s.id
+ORDER BY ${list === 'top' ? 'score DESC,' : ''} created_at DESC
+LIMIT ${limit} OFFSET ${offset}
+  `)
+  .all();
+
+  const totalCount = db
+    .prepare(`SELECT COUNT(*) AS count FROM stories WHERE type = 'post'`)
+    .get().count;
+
+const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---
 <MainLayout>
+  {flashErrorVote && <Error>{flashErrorVote}</Error>}
   <ol class="storiesTimeline">
     {stories.map(story => (
       <li class="storyItem">
@@ -17,9 +41,11 @@ let stories: Story[] = topStoriesIds
       </li>
     ))}
   </ol>
-  <div class="moreLink">
-    <a href={`/top/2`}>More</a>
-  </div>
+  {offset + limit <= totalCount && (
+    <div class="moreLink">
+      <a href={`/?list=${list}&page=${page + 1}`}>More</a>
+    </div>
+  )}
 </MainLayout>
 
 <style>
