@@ -21,5 +21,8 @@
     "@libsql/client": "^0.10.0",
     "astro": "^4.14.5",
     "astro-aws-amplify": "^0.1.0"
+  },
+  "devDependencies": {
+    "@astrojs/node": "^8.3.3"
   }
 }
