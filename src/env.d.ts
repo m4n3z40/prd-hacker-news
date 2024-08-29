@@ -28,7 +28,7 @@ type User = {
 
 declare namespace App {
   interface Locals {
-      db: import('better-sqlite3').Database;
+      db: import('@libsql/client').Client;
       user?: User;
       loggedIn: boolean;
   }

@@ -8,7 +8,7 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "db:migrate": "node ./src/data/migrate-phn-db.mjs"
+    "db:migrate": "node --env-file=.env ./src/data/migrate-phn-db.mjs"
   },
   "keywords": [
     "hackernews",
@@ -18,9 +18,9 @@
   "author": "Allan Baptista (allan@beanimus.com)",
   "license": "ISC",
   "dependencies": {
+    "@libsql/client": "^0.10.0",
     "astro": "^4.14.5",
-    "astro-aws-amplify": "^0.1.0",
-    "better-sqlite3": "^11.2.1"
+    "astro-aws-amplify": "^0.1.0"
   },
   "devDependencies": {
     "@astrojs/node": "^8.3.3"

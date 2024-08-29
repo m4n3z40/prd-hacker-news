@@ -1,10 +1,11 @@
-import Database from 'better-sqlite3';
+import { createClient } from '@libsql/client';
 
-const db = new Database('./src/data/phn.db', { verbose: console.log });
+const turso = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_DATABASE_URL
+});
 
-db.pragma('journal_mode = WAL');
-
-const createUsersTable = db.prepare(`
+const createUsersTableSql = `
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
@@ -12,9 +13,9 @@ const createUsersTable = db.prepare(`
     role TEXT CHECK( role IN ('user','admin') ) NOT NULL DEFAULT 'user',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
-`);
+`;
 
-const createStoriesTable = db.prepare(`
+const createStoriesTableSql = `
   CREATE TABLE IF NOT EXISTS stories (
     id INTEGER PRIMARY KEY,
     parent_id INTEGER,
@@ -28,25 +29,29 @@ const createStoriesTable = db.prepare(`
     FOREIGN KEY(user_id) REFERENCES users(id),
     FOREIGN KEY(parent_id) REFERENCES stories(id)
   );
-`);
+`;
 
-const createVotesTable = db.prepare(`
+const createVotesTableSql = `
   CREATE TABLE IF NOT EXISTS story_votes (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
     story_id INTEGER NOT NULL,
     weight DECIMAL NOT NULL DEFAULT 1,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, story_id) ON CLONFLICT ABORT,
+    UNIQUE(user_id, story_id) ON CONFLICT ABORT,
     FOREIGN KEY(user_id) REFERENCES users(id),
     FOREIGN KEY(story_id) REFERENCES stories(id)
   );
-`);
+`;
 
-const runMigrations = db.transaction(() => {
-  createUsersTable.run();
-  createStoriesTable.run();
-  createVotesTable.run();
-});
+async function runMigrations() {
+  return turso.migrate([
+    { sql: createUsersTableSql },
+    { sql: createStoriesTableSql },
+    { sql: createVotesTableSql },
+  ]);
+}
 
-runMigrations();
+runMigrations()
+  .then((rs) => console.log('Migrations ran successfully.', rs))
+  .catch((err) => console.error(err));

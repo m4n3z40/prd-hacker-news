@@ -9,10 +9,10 @@ const from = Astro.url.searchParams.get('from');
 const [action, storyID] = Astro.params.action.split('/');
 
 try {
-  db.prepare(`
-INSERT INTO story_votes (user_id, story_id, weight)
-VALUES (?, ?, ?)
-  `).run(user.id, storyID, action === 'up' ? 1 : -1);
+  await db.execute({
+    sql: 'INSERT INTO story_votes (user_id, story_id, weight) VALUES (?, ?, ?)',
+    args: [user.id, storyID, action === 'up' ? 1 : -1],
+  });
 
   return Astro.redirect(from, 302);
 } catch (error) {

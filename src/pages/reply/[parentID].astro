@@ -5,7 +5,11 @@ import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 
 const { parentID } = Astro.params;
-const parentStory = Astro.locals.db.prepare('SELECT * FROM stories WHERE id = ?').get(parentID);
+const res = await Astro.locals.db.execute({
+  sql: 'SELECT * FROM stories WHERE id = ?',
+  args: [parentID],
+});
+const parentStory = res.rows[0] as unknown as Story;
 ---
 <MainLayout
   title={`Product Hacker News | Replying to "${parentStory.title || 'Comment'}"`}

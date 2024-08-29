@@ -9,16 +9,17 @@ try {
   const searchParams = Astro.url.searchParams;
   const formData = await Astro.request.formData();
 
-  const title = formData.get('title');
+  const title = formData.get('title') as string;
   const url = formData.get('url') as string;
   const domain = url ? new URL(url).hostname : null;
-  const text = formData.get('text');
+  const text = formData.get('text') as string;
   const parentID = searchParams.has('parentId') ? Number(searchParams.get('parentId')) : null;
   const type = searchParams.get('type') || 'post';
 
-  const { lastInsertRowid } = db
-    .prepare('INSERT INTO stories (title, url, domain, text, type, user_id, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?)')
-    .run(title || '', url, domain, text, type, user.id, parentID);
+  const { lastInsertRowid } = await db.execute({
+    sql: 'INSERT INTO stories (title, url, domain, text, type, user_id, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    args: [title || '', url, domain, text, type, user.id, parentID],
+  });
 
   return Astro.redirect(`/items/${parentID || lastInsertRowid}`);
 } catch (error) {

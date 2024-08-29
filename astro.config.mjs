@@ -4,9 +4,7 @@ import awsAmplify from 'astro-aws-amplify';
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
-  adapter: process.env.NODE_ENV === 'production'
+  adapter: import.meta.env.NODE_ENV === 'production'
     ? awsAmplify()
-    : require('@astrojs/node').default({
-      mode: "standalone"
-    })
+    : (await import('@astrojs/node')).default({ mode: "standalone" })
 });

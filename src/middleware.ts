@@ -1,17 +1,22 @@
-import Database from 'better-sqlite3';
+import { createClient } from '@libsql/client';
 
-export function onRequest({ locals, cookies }, next) {
-  const db = new Database('./src/data/phn.db', { verbose: console.log });
+export async function onRequest({ locals, cookies }, next) {
+  const turso = createClient({
+    url: import.meta.env.TURSO_DATABASE_URL,
+    authToken: import.meta.env.TURSO_DATABASE_URL
+  });
 
-  locals.db = db;
+  locals.db = turso;
   locals.user = cookies.get('user')?.json();
   locals.loggedIn = !!locals.user;
 
   if (locals.loggedIn) {
-    locals.user.karma = db
-      .prepare('SELECT SUM(weight) as karma FROM story_votes WHERE user_id = ?')
-      .get(locals.user.id)
-      .karma || 0;
+    const { rows } = await turso.execute({
+      sql: 'SELECT SUM(weight) as karma FROM story_votes WHERE user_id = ?',
+      args: [locals.user.id],
+    });
+
+    locals.user.karma = rows[0].karma;
   }
 
   return next();

@@ -9,8 +9,8 @@ const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
 const limit = 30;
 const offset = (page - 1) * limit;
 
-const stories: Story[] = db
-  .prepare(`
+const { rows: stories } = await db.execute({
+  sql: `
 SELECT
 	s.*,
 	u.username AS by,
@@ -23,12 +23,11 @@ WHERE s.type = 'post'
 GROUP BY s.id
 ORDER BY ${list === 'top' ? 'score DESC,' : ''} created_at DESC
 LIMIT ${limit} OFFSET ${offset}
-  `)
-  .all();
+`,
+  args: [],
+});
 
-  const totalCount = db
-    .prepare(`SELECT COUNT(*) AS count FROM stories WHERE type = 'post'`)
-    .get().count;
+  const { rows: [{ count: totalCount }] } = await db.execute(`SELECT COUNT(*) AS count FROM stories WHERE type = 'post'`);
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---
@@ -37,11 +36,11 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
   <ol class="storiesTimeline">
     {stories.map(story => (
       <li class="storyItem">
-        <PostSummary story={story} />
+        <PostSummary story={story as unknown as Story} />
       </li>
     ))}
   </ol>
-  {offset + limit <= totalCount && (
+  {offset + limit <= (totalCount as number) && (
     <div class="moreLink">
       <a href={`/?list=${list}&page=${page + 1}`}>More</a>
     </div>

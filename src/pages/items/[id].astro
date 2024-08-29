@@ -9,21 +9,26 @@ import CommentTimeline from '../../components/CommentTimeline.astro';
 const { db, user } = Astro.locals;
 const { id } = Astro.params;
 
-const story = db.prepare(`
-SELECT s.*, u.username AS by, COALESCE(SUM(v.weight), 0) AS score
+const resS = await db.execute({
+  sql: `SELECT s.*, u.username AS by, COALESCE(SUM(v.weight), 0) AS score
 FROM stories s
 JOIN users u ON s.user_id = u.id
 LEFT JOIN story_votes v ON s.id = v.story_id
-WHERE s.id = ?
-  `).get(id);
-const comments = db.prepare(`
-SELECT s.*, u.username AS by, COALESCE(SUM(v.weight), 0) AS score
+WHERE s.id = ?`,
+  args: [id],
+});
+const story = resS.rows[0] as unknown as Story;
+
+const resC = await db.execute({
+  sql: `SELECT s.*, u.username AS by, COALESCE(SUM(v.weight), 0) AS score
 FROM stories s
 JOIN users u ON s.user_id = u.id
 LEFT JOIN story_votes v ON s.id = v.story_id
 WHERE s.parent_id = ?
-GROUP BY s.id
-  `).all(id);
+GROUP BY s.id`,
+  args: [id],
+});
+const comments = resC.rows as unknown as Story[];
 
 const storiesDB = comments
   .concat([story])
