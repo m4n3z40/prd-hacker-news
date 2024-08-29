@@ -2,12 +2,12 @@ import { createClient } from '@libsql/client';
 
 export async function onRequest({ locals, cookies }, next) {
   const turso = createClient({
-    url: process.env.TURSO_DATABASE_URL ?? import.meta.env.TURSO_DATABASE_URL,
-    authToken: process.env.TURSO_DATBASE_TOKEN ?? import.meta.env.TURSO_DATBASE_TOKEN
+    url: import.meta.env.TURSO_DATABASE_URL,
+    authToken: import.meta.env.TURSO_DATBASE_TOKEN
   });
 
   locals.db = turso;
-  locals.user = cookies.get('user')?.json();
+  locals.user = cookies.get('user')?.json() as User | undefined;
   locals.loggedIn = !!locals.user;
 
   if (locals.loggedIn) {

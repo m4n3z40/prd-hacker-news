@@ -42,7 +42,7 @@ const currentPath = Astro.url.pathname;
     {prevStoryID ? <span> | </span><a href={`${currentPath}#post-${prevStoryID}`}>prev</a> : null}
     {nextStoryID ? <span> | </span><a href={`${currentPath}#post-${nextStoryID}`}>next</a> : null}
   </div>
-  {showText ? <div class="postSummary__text" set:html={story.text}></div> : null}
+  {showText ? <div class="postSummary__text" set:html={`<pre>${story.text}</pre>`}></div> : null}
   {showReplyBtn ? <div class="postSummary__replyLink"><a href={`/reply/${story.id}`}>reply</a></div> : null}
 </div>
 
