@@ -5,8 +5,8 @@ import hashPassword from '../../lib/hashPassword.mjs';
 try {
   const formData = await Astro.request.formData();
 
-  const username = formData.get('username');
-  const password = formData.get('password');
+  const username = formData.get('username') as string;
+  const password = formData.get('password') as string;
 
   await Astro.locals.db.execute({
     sql: 'INSERT INTO users (username, password) VALUES (?, ?)',

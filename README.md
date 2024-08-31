@@ -74,11 +74,11 @@ An enhanced clone of [Hackernews](https://news.ycombinator.com) for Product Hack
 - [x] Add README, LICENSE and .Editorconfig
 - [x] Implement Hackernews HTML code
     - [x] Mobile screens related code
-    - [ ] Desktop screens related code
+    - [x] Desktop screens related code
     - [ ] SEO & accessibility
 - [x] Style with CSS
     - [x] Mobile screens related code
-    - [ ] Desktop screens relatad code
+    - [x] Desktop screens relatad code
 - [x] Make it work with Javascript behaviors
 - [x] Make it persist with database
 - [ ] Make it scallable and reliable

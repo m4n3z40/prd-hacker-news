@@ -151,6 +151,7 @@ const userKarma = Astro.locals.user?.karma;
     color: #000000;
     margin-left: auto;
     margin-right: 10px;
+    white-space: nowrap;
   }
 
   main, .mainFooter {
@@ -200,5 +201,34 @@ const userKarma = Astro.locals.user?.karma;
     font-size: 16px;
     padding: 1px 2px;
     width: 90%;
+  }
+
+  @media (min-width: 768px) {
+    .mainHeader, main, .mainFooter {
+      min-width: 768px;
+      margin: 0 auto;
+    }
+
+    main {
+      width: 85%;
+    }
+
+    .mainHeader {
+      margin-top: 10px;
+      width: calc(85% - 10px);
+    }
+
+    .mainFooter {
+      width: calc(85% - 10px);
+      margin-bottom: 10px;
+    }
+
+    .navWrapper {
+      display: flex;
+    }
+
+    .navWrapper > nav {
+      margin-left: 5px;
+    }
   }
 </style>
