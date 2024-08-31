@@ -211,6 +211,11 @@ const userKarma = Astro.locals.user?.karma;
 
     main {
       width: 85%;
+      min-height: calc(100vh - 162px);
+    }
+
+    .mainHeader.mainHeader__hiddenNavigation + main {
+      min-height: calc(100vh - 162px);
     }
 
     .mainHeader {
