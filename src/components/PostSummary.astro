@@ -33,7 +33,9 @@ const currrentPath = path ?? Astro.url.pathname;
 <div class="postSummary" id={`post-${story.id}`}>
   <div class:list={['postSummary__header', { 'postSummary__header--noTitle': !story.title }]}>
     <div class="postSummary__title">
-      <a href={`/vote/up/${story.id}?from=${currrentPath}`} class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
+      <a href={`/vote/up/${story.id}?from=${currrentPath}`} class="postSummary__voteLink" data-astro-prefetch="false">
+        <img src="/triangle.svg" alt="Vote up" width="13" height="13">
+      </a>
       {story.title ? (
         <div class="postSummary__titleWrapper">
           <a href={story.url ? story.url : `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>
