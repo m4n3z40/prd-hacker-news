@@ -5,7 +5,7 @@ export interface Props {
   story: Story;
   showText?: boolean;
   showReplyBtn?: boolean;
-  showParentTitle?: boolean;
+  showRootTitle?: boolean;
   rootStoryID?: number|string;
   parentStoryID?: number|string;
   prevStoryID?: number|string;
@@ -26,7 +26,7 @@ const getTitlePrefix = (story: Story) => {
   }
 };
 
-const { story: storyData, showText = false, showReplyBtn = false, rootStoryID, parentStoryID, showParentTitle, prevStoryID, nextStoryID, path } = Astro.props;
+const { story: storyData, showText = false, showReplyBtn = false, rootStoryID, parentStoryID, showRootTitle, prevStoryID, nextStoryID, path } = Astro.props;
 const story = createStory(storyData);
 const currrentPath = path ?? Astro.url.pathname;
 ---
@@ -55,7 +55,7 @@ const currrentPath = path ?? Astro.url.pathname;
       }
       {rootStoryID ? <span> | </span><a href={`${currrentPath}#post-${rootStoryID}`}>root</a> : null}
       {parentStoryID ? <span> | </span><a href={`${currrentPath}#post-${parentStoryID}`}>parent</a> : null}
-      {showParentTitle && story.parent_title ? <span> | on: </span><a href={`/items/${story.parent_id}`}>{story.parent_title}</a> : null}
+      {showRootTitle && story.root_id && story.root_title ? <span> | on: </span><a href={`/items/${story.root_id}`}>{story.root_title}</a> : null}
       {prevStoryID ? <span> | </span><a href={`${currrentPath}#post-${prevStoryID}`}>prev</a> : null}
       {nextStoryID ? <span> | </span><a href={`${currrentPath}#post-${nextStoryID}`}>next</a> : null}
     </div>

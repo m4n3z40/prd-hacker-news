@@ -6,7 +6,7 @@ if (!loggedIn) {
 }
 
 try {
-  const searchParams = Astro.url.searchParams;
+  const from = Astro.url.searchParams.get('from');
   const formData = await Astro.request.formData();
 
   const title = formData.get('title') as string;
@@ -21,7 +21,7 @@ try {
     args: [title || '', url, domain, text, type, user.id, parentID],
   });
 
-  return Astro.redirect(`/items/${parentID || lastInsertRowid}`);
+  return Astro.redirect(from || `/items/${lastInsertRowid}`);
 } catch (error) {
   console.error(error);
 

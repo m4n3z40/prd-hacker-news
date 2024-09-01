@@ -12,7 +12,8 @@ type Story = {
   time?: string;
   descendants?: number;
   parent_id?: number;
-  parent_title?: string;
+  root_id?: number;
+  root_title?: string;
   kids?: number[];
   type: string;
   created_at: string;

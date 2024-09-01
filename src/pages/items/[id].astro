@@ -20,11 +20,20 @@ WHERE s.id = ?`,
 const story = resS.rows[0] as unknown as Story;
 
 const resC = await db.execute({
-  sql: `SELECT s.*, u.username AS by, COALESCE(SUM(v.weight), 0) AS score
+  sql: `WITH descendants as (
+  SELECT s.id, s.parent_id
+  FROM stories s
+  WHERE s.parent_id = ?
+  UNION ALL
+  SELECT sc.id, sc.parent_id
+  FROM stories sc
+  INNER JOIN descendants d ON d.id = sc.parent_id
+)
+SELECT s.*, u.username AS by, COALESCE(SUM(v.weight), 0) AS score
 FROM stories s
 JOIN users u ON s.user_id = u.id
 LEFT JOIN story_votes v ON s.id = v.story_id
-WHERE s.parent_id = ?
+WHERE s.id IN (SELECT id FROM descendants)
 GROUP BY s.id`,
   args: [id],
 });
@@ -32,12 +41,17 @@ const comments = resC.rows as unknown as Story[];
 
 const storiesDB = comments
   .concat([story])
-  .reduce((acc, story) => {
+  .reduce((acc, story, _, allComments) => {
+    story.kids = allComments.reduce((acc, comment) => {
+      if (comment.parent_id === story.id) {
+        acc.push(comment.id);
+      }
+      return acc;
+    }, []);
     acc[story.id] = story;
     return acc;
   }, {});
 
-story.kids = comments.map((comment) => comment.id);
 story.descendants = comments.length;
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
@@ -46,7 +60,7 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
   {flashErrorVote && <Error>{flashErrorVote}</Error>}
   <MainStoryContainer>
     <PostSummary story={story} showText />
-    {user ? <CommentForm parentID={story.id} /> : null}
+    {user ? <CommentForm parentID={story.id} rootID={story.id} /> : null}
     <CommentTimeline items={story.kids ?? []} getItem={id => storiesDB[id]} />
   </MainStoryContainer>
 </MainLayout>

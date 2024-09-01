@@ -11,8 +11,7 @@ const limit = 30;
 const offset = (page - 1) * limit;
 
 const { rows: stories } = await db.execute({
-  sql: `
-SELECT
+  sql: `SELECT
 	s.*,
 	u.username AS by,
 	COUNT(c.id) AS descendants,
@@ -23,8 +22,7 @@ LEFT JOIN stories c ON s.id = c.parent_id
 WHERE s.type = ?
 GROUP BY s.id
 ORDER BY ${list === 'top' ? 'score DESC,' : ''} created_at DESC
-LIMIT ${limit} OFFSET ${offset}
-`,
+LIMIT ${limit} OFFSET ${offset}`,
   args: [postType],
 });
 

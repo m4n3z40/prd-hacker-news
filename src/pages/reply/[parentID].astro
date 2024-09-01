@@ -4,12 +4,43 @@ import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 
+const { loggedIn, db, user } = Astro.locals;
+
+if (!loggedIn) {
+  return Astro.redirect('/login', 302);
+}
+
 const { parentID } = Astro.params;
-const res = await Astro.locals.db.execute({
-  sql: 'SELECT * FROM stories WHERE id = ?',
+const res = await db.execute({
+  sql: `SELECT s.*, u.username as by
+FROM stories s
+JOIN users u ON s.user_id = u.id
+WHERE s.id = ? `,
   args: [parentID],
 });
 const parentStory = res.rows[0] as unknown as Story;
+let rootStory = parentStory;
+
+if (rootStory.parent_id !== null) {
+  const resRoot = await db.execute({
+    sql: `WITH parents as (
+  SELECT sc.id, sc.parent_id
+  FROM stories sc
+  WHERE sc.id = ?
+  UNION ALL
+  SELECT sp.id, sp.parent_id
+  FROM stories sp
+  INNER JOIN parents d ON d.parent_id = sp.id
+)
+SELECT * FROM stories WHERE id IN (
+  SELECT id FROM parents WHERE parent_id is NULL
+);`,
+    args: [rootStory.id],
+  });
+  rootStory = resRoot.rows[0] as unknown as Story;
+  parentStory.root_id = rootStory.id;
+  parentStory.root_title = rootStory.title;
+}
 ---
 <MainLayout
   title={`Product Hacker News | Replying to "${parentStory.title || 'Comment'}"`}
@@ -18,8 +49,8 @@ const parentStory = res.rows[0] as unknown as Story;
   hideLogin
 >
   <MainStoryContainer>
-    <PostSummary story={parentStory} showText />
-    <CommentForm parentID={parentID} submitLabel="reply" />
+    <PostSummary story={parentStory} showText showRootTitle />
+    <CommentForm parentID={parentID} rootID={rootStory.id} submitLabel="reply" />
   </MainStoryContainer>
 </MainLayout>
 

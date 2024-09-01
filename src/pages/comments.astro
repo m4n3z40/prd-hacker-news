@@ -13,7 +13,8 @@ const { rows: stories } = await db.execute({
 SELECT
 	c.*,
 	u.username AS by,
-  s.title AS parent_title,
+  s.id AS root_id,
+  s.title AS root_title,
 	(SELECT COALESCE(SUM(weight), 0) FROM story_votes WHERE story_id = c.id) AS score
 FROM stories c
 JOIN users u ON c.user_id = u.id
@@ -40,7 +41,7 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
           path={`/items/${story.parent_id}`}
           parentStoryID={story.parent_id as number}
           showText
-          showParentTitle
+          showRootTitle
         />
       </li>
     ))}
