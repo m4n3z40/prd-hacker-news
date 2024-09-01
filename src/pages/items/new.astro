@@ -13,8 +13,8 @@ try {
   const url = formData.get('url') as string;
   const domain = url ? new URL(url).hostname : null;
   const text = formData.get('text') as string;
-  const parentID = searchParams.has('parentId') ? Number(searchParams.get('parentId')) : null;
-  const type = searchParams.get('type') || 'post';
+  const type = formData.get('type') as string || 'post';
+  const parentID = formData.get('parentId') as string ?? null;
 
   const { lastInsertRowid } = await db.execute({
     sql: 'INSERT INTO stories (title, url, domain, text, type, user_id, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?)',

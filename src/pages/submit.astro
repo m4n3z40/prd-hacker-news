@@ -1,7 +1,15 @@
 ---
 import MainLayout from '../layouts/main.astro';
 
-if (!Astro.locals.loggedIn) {
+const { loggedIn, user } = Astro.locals;
+const storyTypesAndKarmaReqs = {
+  'post': 0,
+  'ask': 10,
+  'show': 100,
+  'job': 1000,
+};
+
+if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
@@ -19,6 +27,15 @@ const flashError = Astro.cookies.get('flash_error')?.value;
     </div>
   )}
   <form action="/items/new" method="POST" class="newStoryForm">
+    <div class="newStoryForm__field">
+      <label for="type">type</label>
+      <select name="type" id="type" required>
+        {Object.keys(storyTypesAndKarmaReqs).map(type => (
+          <option value={type} selected={type === 'post'} disabled={user.karma < storyTypesAndKarmaReqs[type]}>
+            {type} ({storyTypesAndKarmaReqs[type]}+ karma required)
+          </option>
+        ))}
+    </div>
     <div class="newStoryForm__field">
       <label for="title">title</label>
       <input type="text" name="title" id="title" required>
@@ -69,7 +86,7 @@ const flashError = Astro.cookies.get('flash_error')?.value;
     width: 30px;
   }
 
-  .newStoryForm__field > input, .newStoryForm__field > textarea {
+  .newStoryForm__field > input, .newStoryForm__field > textarea, .newStoryForm__field > select {
     flex: 1;
     max-width: 90%;
     font-size: 16px;

@@ -4,15 +4,24 @@ import Error from '../components/Error.astro';
 import PostSummary from '../components/PostSummary.astro';
 
 const { db } = Astro.locals;
-const list = Astro.url.searchParams.get('list') || 'top';
-const postType = Astro.url.searchParams.get('type') || 'post';
+const by = Astro.url.searchParams.get('user');
+const q = Astro.url.searchParams.get('q');
 const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
 const limit = 30;
 const offset = (page - 1) * limit;
 
-const { rows: stories } = await db.execute({
-  sql: `
-SELECT
+const { rows: [{ count: totalCount }] } = await db.execute({
+    sql: `SELECT COUNT(s.id) AS count
+FROM stories s
+JOIN users u ON s.user_id = u.id
+WHERE type = 'post'
+${by ? 'AND u.username = ?' : ''}
+${q ? 'AND s.title LIKE ?' : ''}`,
+    args: [by, q && `%${q}%`].filter(Boolean),
+  });
+
+const { rows: stories } = totalCount as number > 0 ? await db.execute({
+  sql: `SELECT
 	s.*,
 	u.username AS by,
 	COUNT(c.id) AS descendants,
@@ -20,25 +29,19 @@ SELECT
 FROM stories s
 JOIN users u ON s.user_id = u.id
 LEFT JOIN stories c ON s.id = c.parent_id
-WHERE s.type = ?
+WHERE s.type = 'post'
+${by ? 'AND u.username = ?' : ''}
+${q ? 'AND s.title LIKE ?' : ''}
 GROUP BY s.id
-ORDER BY ${list === 'top' ? 'score DESC,' : ''} created_at DESC
-LIMIT ${limit} OFFSET ${offset}
-`,
-  args: [postType],
-});
-
-  const { rows: [{ count: totalCount }] } = await db.execute({
-    sql: `SELECT COUNT(*) AS count FROM stories WHERE type = ?`,
-    args: [postType],
-  });
+ORDER BY score DESC, created_at DESC
+LIMIT ${limit} OFFSET ${offset}`,
+  args: [by, q && `%${q}%`].filter(Boolean),
+}) : { rows: [] };
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
-const postTypeError = ['post', 'ask', 'show', 'job'].some(t => t === postType) ? null : 'Invalid post type.';
 ---
 <MainLayout>
   {flashErrorVote && <Error>{flashErrorVote}</Error>}
-  {postTypeError && <Error>{postTypeError}</Error>}
   <ol class="storiesTimeline">
     {stories.map(story => (
       <li class="storyItem">
@@ -48,7 +51,7 @@ const postTypeError = ['post', 'ask', 'show', 'job'].some(t => t === postType) ?
   </ol>
   {offset + limit <= (totalCount as number) && (
     <div class="moreLink">
-      <a href={`/?page=${page + 1}${list ? `&list=${list}` : ''}${postType ? `&type=${postType}` : ''}`}>More</a>
+      <a href={`/?page=${page + 1}${by ? `&user=${by}` : ''}${q ? `&q=${q}` : ''}`}>More</a>
     </div>
   )}
 </MainLayout>

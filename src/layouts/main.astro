@@ -42,11 +42,10 @@ const userKarma = Astro.locals.user?.karma;
           <nav>
             <ul>
               <li><a href="/?list=newest">new</a></li>
-              <li><a href="/history">past</a></li>
               <li><a href="/comments">comments</a></li>
-              <li><a href="/ask">ask</a></li>
-              <li><a href="/show">show</a></li>
-              <li><a href="/jobs">jobs</a></li>
+              <li><a href="/?type=ask">ask</a></li>
+              <li><a href="/?type=show">show</a></li>
+              <li><a href="/?type=job">jobs</a></li>
               {user ? <li><a href="/submit">submit</a></li> : null}
             </ul>
           </nav>
@@ -70,20 +69,18 @@ const userKarma = Astro.locals.user?.karma;
       <div>
         <nav>
           <ul>
-            <li><a href="#">Guidelines</a></li>
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Lists</a></li>
-            <li><a href="#">API</a></li>
-            <li><a href="#">Security</a></li>
-            <li><a href="#">Legal</a></li>
-            <li><a href="#">Apply to YC</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="https://www.sbcschool.com.br/">SBC Home</a></li>
+            <li><a href="https://www.sbcschool.com.br/technical-product-manager">About TPM Course</a></li>
+            <li><a href="https://www.sbcschool.com.br/privacy">Privacy Terms</a></li>
+            <li><a href="https://api.whatsapp.com/send?phone=5561999798448">Contact</a></li>
           </ul>
         </nav>
       </div>
       <div class="searchWrapper">
-        <label for="mainSearch">Search:</label>
-        <input type="search" id="mainSearch" name="q" />
+        <form action="/search" method="get">
+          <label for="mainSearch">Search:</label>
+          <input type="search" id="mainSearch" name="q" />
+        </form>
       </div>
     </footer>
   </body>

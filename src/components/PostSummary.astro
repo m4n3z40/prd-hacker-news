@@ -5,24 +5,39 @@ export interface Props {
   story: Story;
   showText?: boolean;
   showReplyBtn?: boolean;
+  showParentTitle?: boolean;
   rootStoryID?: number|string;
   parentStoryID?: number|string;
   prevStoryID?: number|string;
   nextStoryID?: number|string;
+  path?: string;
 }
 
-const { story: storyData, showText = false, showReplyBtn = false, rootStoryID, parentStoryID, prevStoryID, nextStoryID } = Astro.props;
+const getTitlePrefix = (story: Story) => {
+  switch (story.type) {
+    case 'ask':
+      return 'Ask PHN: ';
+    case 'show':
+      return 'Show PHN: ';
+    case 'job':
+      return 'Job: ';
+    default:
+      return '';
+  }
+};
+
+const { story: storyData, showText = false, showReplyBtn = false, rootStoryID, parentStoryID, showParentTitle, prevStoryID, nextStoryID, path } = Astro.props;
 const story = createStory(storyData);
-const currentPath = Astro.url.pathname;
+const currrentPath = path ?? Astro.url.pathname;
 ---
 <div class="postSummary" id={`post-${story.id}`}>
   <div class:list={['postSummary__header', { 'postSummary__header--noTitle': !story.title }]}>
     <div class="postSummary__title">
-      <a href={`/vote/up/${story.id}?from=${currentPath}`} class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
+      <a href={`/vote/up/${story.id}?from=${currrentPath}`} class="postSummary__voteLink"><img src="/triangle.svg" alt="Vote up" width="13" height="13"></a>
       {story.title ? (
         <div class="postSummary__titleWrapper">
           <a href={story.url ? story.url : `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>
-            <h3>{story.title}</h3>
+            <h3>{getTitlePrefix(story)}{story.title}</h3>
           </a>
           {story.domain ? <a href={`/search?site=${story.domain}`} class="postSummary__domain">({story.domain})</a> : null}
         </div>
@@ -38,10 +53,11 @@ const currentPath = Astro.url.pathname;
           ? <span> | </span><a href={`/items/${story.id}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
           : null
       }
-      {rootStoryID ? <span> | </span><a href={`${currentPath}#post-${rootStoryID}`}>root</a> : null}
-      {parentStoryID ? <span> | </span><a href={`${currentPath}#post-${parentStoryID}`}>parent</a> : null}
-      {prevStoryID ? <span> | </span><a href={`${currentPath}#post-${prevStoryID}`}>prev</a> : null}
-      {nextStoryID ? <span> | </span><a href={`${currentPath}#post-${nextStoryID}`}>next</a> : null}
+      {rootStoryID ? <span> | </span><a href={`${currrentPath}#post-${rootStoryID}`}>root</a> : null}
+      {parentStoryID ? <span> | </span><a href={`${currrentPath}#post-${parentStoryID}`}>parent</a> : null}
+      {showParentTitle && story.parent_title ? <span> | on: </span><a href={`/items/${story.parent_id}`}>{story.parent_title}</a> : null}
+      {prevStoryID ? <span> | </span><a href={`${currrentPath}#post-${prevStoryID}`}>prev</a> : null}
+      {nextStoryID ? <span> | </span><a href={`${currrentPath}#post-${nextStoryID}`}>next</a> : null}
     </div>
   </div>
   {showText ? <div class="postSummary__text" set:html={`<pre>${story.text}</pre>`}></div> : null}
