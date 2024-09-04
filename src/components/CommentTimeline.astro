@@ -45,6 +45,11 @@ const { items, getItem, rootID } = Astro.props;
     padding: 0 8px;
   }
 
+  .commentItem :global(.postSummary__body) {
+    border-left: 1px solid #e5e5e5;
+    margin-left: 6px;
+  }
+
   .commentItem:not(:first-child) {
     margin-top: 8px;
   }

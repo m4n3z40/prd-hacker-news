@@ -54,7 +54,7 @@ const currrentPath = path ?? Astro.url.pathname;
           ? <span> | </span><a href={`/items/${story.id}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
           : null
       }
-      {story.type !== 'comment' && story.url ? <span> | </span><a href={`/items/${story.id}`}>read</a>: null}
+      {story.type !== 'comment' && story.url ? <span> | </span><a href={`/items/${story.id}`}>read post</a>: null}
       {rootStoryID ? <span> | </span><a href={`${currrentPath}#post-${rootStoryID}`}>root</a> : null}
       {parentStoryID ? <span> | </span><a href={`${currrentPath}#post-${parentStoryID}`}>parent</a> : null}
       {showRootTitle && story.root_id && story.root_title ? <span> | on: </span><a href={`/items/${story.root_id}`}>{story.root_title}</a> : null}
@@ -62,8 +62,10 @@ const currrentPath = path ?? Astro.url.pathname;
       {nextStoryID ? <span> | </span><a href={`${currrentPath}#post-${nextStoryID}`}>next</a> : null}
     </div>
   </div>
-  {showText ? <div class="postSummary__text" set:html={`<pre>${story.text}</pre>`}></div> : null}
-  {showReplyBtn ? <div class="postSummary__replyLink"><a href={`/reply/${story.id}`}>reply</a></div> : null}
+  <div class="postSummary__body">
+    {showText ? <div class="postSummary__text" set:html={`<pre>${story.text}</pre>`}></div> : null}
+    {showReplyBtn ? <div class="postSummary__replyLink"><a href={`/reply/${story.id}`}>reply</a></div> : null}
+  </div>
 </div>
 
 <style>
@@ -151,6 +153,8 @@ const currrentPath = path ?? Astro.url.pathname;
   }
 
   :global(.postSummary__text > pre) {
+    margin: 0;
+    padding: 10px 0 5px;
     white-space: pre-wrap;
   }
 
