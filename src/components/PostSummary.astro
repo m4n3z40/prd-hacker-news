@@ -1,4 +1,5 @@
 ---
+import { marked } from 'marked';
 import createStory from "../lib/createStory.mjs";
 
 export interface Props {
@@ -27,7 +28,7 @@ const getTitlePrefix = (story: Story) => {
 };
 
 const { story: storyData, showText = false, showReplyBtn = false, rootStoryID, parentStoryID, showRootTitle, prevStoryID, nextStoryID, path } = Astro.props;
-const story = createStory(storyData);
+const story = createStory(storyData) as Story;
 const currrentPath = path ?? Astro.url.pathname;
 ---
 <div class="postSummary" id={`post-${story.id}`}>
@@ -63,7 +64,8 @@ const currrentPath = path ?? Astro.url.pathname;
     </div>
   </div>
   <div class="postSummary__body">
-    {showText ? <div class="postSummary__text" set:html={`<pre>${story.text}</pre>`}></div> : null}
+    <!-- TODO: DANGER! SANITIZE MARKDOWN OUTPUT -->
+    {showText && story.text ? <div class="postSummary__text" set:html={marked.parse(story.text)}></div> : null}
     {showReplyBtn ? <div class="postSummary__replyLink"><a href={`/reply/${story.id}`}>reply</a></div> : null}
   </div>
 </div>

@@ -5,11 +5,12 @@ type Story = {
   id: number;
   title: string;
   text?: string;
+  domain?: string;
   url?: string;
   score?: number;
   user_id: number;
   by?: string;
-  time?: string;
+  time_ago?: string;
   descendants?: number;
   parent_id?: number;
   root_id?: number;
