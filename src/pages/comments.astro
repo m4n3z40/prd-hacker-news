@@ -27,7 +27,7 @@ LIMIT ${limit} OFFSET ${offset}
   args: [],
 });
 
-  const { rows: [{ count: totalCount }] } = await db.execute(`SELECT COUNT(*) AS count FROM stories WHERE type = 'comment'`);
+const { rows: [{ count: totalCount }] } = await db.execute(`SELECT COUNT(id) AS count FROM stories WHERE type = 'comment'`);
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---

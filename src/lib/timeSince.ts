@@ -1,5 +1,5 @@
-export default function timeSince(date) {
-  const seconds = Math.floor((Date.now() - date) / 1000);
+export default function timeSince(date:Date):string {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
   let interval = seconds / 31536000;
 
   if (interval > 1) return Math.floor(interval) + " years";

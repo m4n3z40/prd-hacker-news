@@ -14,7 +14,15 @@ const { rows: stories } = await db.execute({
   sql: `SELECT
 	s.*,
 	u.username AS by,
-	COUNT(c.id) AS descendants,
+	(WITH RECURSIVE children (id, parent_id) as (
+      SELECT sc1.id, sc1.parent_id
+      FROM stories sc1
+      WHERE sc1.parent_id = s.id
+      UNION ALL
+      SELECT sc2.id, sc2.parent_id
+      FROM stories sc2
+      INNER JOIN children d ON d.id = sc2.parent_id
+  ) SELECT COUNT(id) FROM children) AS descendants,
 	(SELECT COALESCE(SUM(weight), 0) FROM story_votes WHERE story_id = s.id) AS score
 FROM stories s
 JOIN users u ON s.user_id = u.id
@@ -27,7 +35,7 @@ LIMIT ${limit} OFFSET ${offset}`,
 });
 
   const { rows: [{ count: totalCount }] } = await db.execute({
-    sql: `SELECT COUNT(*) AS count FROM stories WHERE type = ?`,
+    sql: `SELECT COUNT(id) AS count FROM stories WHERE type = ?`,
     args: [postType],
   });
 

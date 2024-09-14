@@ -1,6 +1,6 @@
 ---
 import { marked } from 'marked';
-import createStory from "../lib/createStory.mjs";
+import createStory from '../lib/createStory';
 
 export interface Props {
   story: Story;
@@ -28,7 +28,7 @@ const getTitlePrefix = (story: Story) => {
 };
 
 const { story: storyData, showText = false, showReplyBtn = false, rootStoryID, parentStoryID, showRootTitle, prevStoryID, nextStoryID, path } = Astro.props;
-const story = createStory(storyData) as Story;
+const story = createStory(storyData);
 const currrentPath = path ?? Astro.url.pathname;
 ---
 <div class="postSummary" id={`post-${story.id}`}>

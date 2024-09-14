@@ -1,6 +1,6 @@
 ---
 import MainLayout from '../../layouts/main.astro';
-import hashPassword from '../../lib/hashPassword.mjs';
+import hashPassword from '../../lib/hashPassword';
 
 try {
   const formData = await Astro.request.formData();
