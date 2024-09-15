@@ -1,7 +1,7 @@
 import { createClient } from '@libsql/client';
-import StoriesRepository from './repository/stories';
-import VotesRepository from './repository/votes';
-import UsersRepository from './repository/users';
+import StoriesRepository from './repository/stories.ts';
+import VotesRepository from './repository/votes.ts';
+import UsersRepository from './repository/users.ts';
 
 export async function onRequest({ locals, cookies }, next) {
   const turso = createClient({

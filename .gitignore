@@ -8,6 +8,7 @@ yarn-error.log
 # Astro
 /dist/
 /.astro/
+/.amplify-hosting/
 
 # Mac
 .DS_Store

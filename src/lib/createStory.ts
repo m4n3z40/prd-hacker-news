@@ -1,4 +1,4 @@
-import timeSince from './timeSince';
+import timeSince from './timeSince.ts';
 
 export default function createStory(storyData):Story {
   return Object.assign({}, storyData, {
