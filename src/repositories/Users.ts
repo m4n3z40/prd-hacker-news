@@ -1,5 +1,5 @@
 import type { Client } from '@libsql/client';
-import hashPassword from '../lib/hashPassword';
+import hashPassword from '@lib/hashPassword.ts';
 
 export default class UsersRepository {
   constructor(private db: Client) {}

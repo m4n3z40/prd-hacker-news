@@ -1,14 +1,13 @@
 import { createClient } from '@libsql/client';
+import StoriesRepository from '@repositories/stories.ts';
+import VotesRepository from '@repositories/votes.ts';
+import UsersRepository from '@repositories/users.ts';
 
 export async function onRequest({ locals, cookies }, next) {
   const turso = createClient({
     url: import.meta.env.TURSO_DATABASE_URL,
     authToken: import.meta.env.TURSO_DATBASE_TOKEN
   });
-
-  const StoriesRepository = (await import('./repository/stories.ts')).default;
-  const VotesRepository = (await import('./repository/votes.ts')).default;
-  const UsersRepository = (await import('./repository/users.ts')).default;
 
   const repositories = {
     users: new UsersRepository(turso),

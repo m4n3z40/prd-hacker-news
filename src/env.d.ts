@@ -35,9 +35,9 @@ declare namespace App {
   interface Locals {
       db: import('@libsql/client').Client;
       repositories: {
-        users: import('./repository/users').default;
-        stories: import('./repository/stories').default;
-        votes: import('./repository/votes').default;
+        users: import('./repositories/users').default;
+        stories: import('./repositories/stories').default;
+        votes: import('./repositories/votes').default;
       };
       user?: User;
       loggedIn: boolean;
