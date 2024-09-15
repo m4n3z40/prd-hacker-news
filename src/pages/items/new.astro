@@ -1,5 +1,5 @@
 ---
-const { loggedIn, db, user } = Astro.locals;
+const { loggedIn, repositories, user } = Astro.locals;
 
 if (!loggedIn) {
   return Astro.redirect('/login', 302);
@@ -11,17 +11,20 @@ try {
 
   const title = formData.get('title') as string;
   const url = formData.get('url') as string;
-  const domain = url ? new URL(url).hostname : null;
   const text = formData.get('text') as string;
-  const type = formData.get('type') as string || 'post';
-  const parentID = formData.get('parentId') as string ?? null;
+  const type = formData.get('type') as string as PostType || 'post';
+  const parentID = parseInt(formData.get('parentId') as string, 10) || null;
 
-  const { lastInsertRowid } = await db.execute({
-    sql: 'INSERT INTO stories (title, url, domain, text, type, user_id, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    args: [title || '', url, domain, text, type, user.id, parentID],
-  });
+  const story = await repositories.stories.create({
+    title: title || '',
+    url,
+    text,
+    type,
+    user_id: user.id,
+    parent_id: parentID,
+  } as Story);
 
-  return Astro.redirect(from || `/items/${lastInsertRowid}`);
+  return Astro.redirect(from || `/items/${story.id}`);
 } catch (error) {
   console.error(error);
 

@@ -1,15 +1,13 @@
 ---
-import hashPassword from '../../lib/hashPassword';
-
 try {
   const formData = await Astro.request.formData();
 
   const username = formData.get('username') as string|null;
   const password = formData.get('password') as string|null;
 
-  const { rows: [user] } = await Astro.locals.db.execute({
-    sql: 'SELECT id, username, role, created_at FROM users WHERE username = ? AND password = ?',
-    args: [username, hashPassword(password)],
+  const user = await Astro.locals.repositories.users.getByLoginData({
+    username,
+    password,
   });
 
   if (!user) {

@@ -15,7 +15,7 @@ const { items, getItem, rootID } = Astro.props;
       const story = getItem(id);
       const parentStory = getItem(story.parent_id)
       const parentID = parentStory.id;
-      const localRootID = parentStory.type === 'story' ? parentID : rootID;
+      const localRootID = parentStory.type === 'post' ? parentID : rootID;
       const prevID = items[index - 1];
       const nextID = items[index + 1];
 

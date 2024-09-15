@@ -4,40 +4,21 @@ import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 
-const { loggedIn, db, user } = Astro.locals;
+const { loggedIn, repositories: { stories:storiesRepo } } = Astro.locals;
 
 if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
 const { parentID } = Astro.params;
-const res = await db.execute({
-  sql: `SELECT s.*, u.username as by
-FROM stories s
-JOIN users u ON s.user_id = u.id
-WHERE s.id = ? `,
-  args: [parentID],
-});
-const parentStory = res.rows[0] as unknown as Story;
+
+const parentStory = await storiesRepo.getById(parseInt(parentID, 10));;
+
 let rootStory = parentStory;
 
 if (rootStory.parent_id !== null) {
-  const resRoot = await db.execute({
-    sql: `WITH parents as (
-  SELECT sc.id, sc.parent_id
-  FROM stories sc
-  WHERE sc.id = ?
-  UNION ALL
-  SELECT sp.id, sp.parent_id
-  FROM stories sp
-  INNER JOIN parents d ON d.parent_id = sp.id
-)
-SELECT * FROM stories WHERE id IN (
-  SELECT id FROM parents WHERE parent_id is NULL
-);`,
-    args: [rootStory.id],
-  });
-  rootStory = resRoot.rows[0] as unknown as Story;
+  rootStory = await storiesRepo.getRootByDescendantId(parentStory.id);
+
   parentStory.root_id = rootStory.id;
   parentStory.root_title = rootStory.title;
 }

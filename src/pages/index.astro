@@ -3,41 +3,18 @@ import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostSummary from '../components/PostSummary.astro';
 
-const { db } = Astro.locals;
-const list = Astro.url.searchParams.get('list') || 'top';
-const postType = Astro.url.searchParams.get('type') || 'post';
+const { repositories: { stories:storiesRepo } } = Astro.locals;
+const list = (Astro.url.searchParams.get('list') || 'top') as 'top' | 'new';
+const postType = (Astro.url.searchParams.get('type') || 'post') as PostType;
 const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
-const limit = 30;
-const offset = (page - 1) * limit;
+const perPage = 30;
+let stories:Story[] = [];
 
-const { rows: stories } = await db.execute({
-  sql: `SELECT
-	s.*,
-	u.username AS by,
-	(WITH RECURSIVE children (id, parent_id) as (
-      SELECT sc1.id, sc1.parent_id
-      FROM stories sc1
-      WHERE sc1.parent_id = s.id
-      UNION ALL
-      SELECT sc2.id, sc2.parent_id
-      FROM stories sc2
-      INNER JOIN children d ON d.id = sc2.parent_id
-  ) SELECT COUNT(id) FROM children) AS descendants,
-	(SELECT COALESCE(SUM(weight), 0) FROM story_votes WHERE story_id = s.id) AS score
-FROM stories s
-JOIN users u ON s.user_id = u.id
-LEFT JOIN stories c ON s.id = c.parent_id
-WHERE s.type = ?
-GROUP BY s.id
-ORDER BY ${list === 'top' ? 'score DESC,' : ''} created_at DESC
-LIMIT ${limit} OFFSET ${offset}`,
-  args: [postType],
-});
+const totalCount = await storiesRepo.countAll({ type: postType });
 
-  const { rows: [{ count: totalCount }] } = await db.execute({
-    sql: `SELECT COUNT(id) AS count FROM stories WHERE type = ?`,
-    args: [postType],
-  });
+if (totalCount > 0) {
+  stories = await storiesRepo.getAll({ type: postType, list, page, perPage });
+}
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 const postTypeError = ['post', 'ask', 'show', 'job'].some(t => t === postType) ? null : 'Invalid post type.';
@@ -48,11 +25,11 @@ const postTypeError = ['post', 'ask', 'show', 'job'].some(t => t === postType) ?
   <ol class="storiesTimeline">
     {stories.map(story => (
       <li class="storyItem">
-        <PostSummary story={story as unknown as Story} />
+        <PostSummary story={story} />
       </li>
     ))}
   </ol>
-  {offset + limit <= (totalCount as number) && (
+  {page * perPage < totalCount && (
     <div class="moreLink">
       <a href={`/?page=${page + 1}${list ? `&list=${list}` : ''}${postType ? `&type=${postType}` : ''}`}>More</a>
     </div>

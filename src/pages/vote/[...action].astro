@@ -1,18 +1,15 @@
 ---
-const { loggedIn, db, user } = Astro.locals;
+const { loggedIn, repositories, user } = Astro.locals;
 
 if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
 const from = Astro.url.searchParams.get('from');
-const [action, storyID] = Astro.params.action.split('/');
+const [action, storyID] = Astro.params.action.split('/') as ['up' | 'down', string];
 
 try {
-  await db.execute({
-    sql: 'INSERT INTO story_votes (user_id, story_id, weight) VALUES (?, ?, ?)',
-    args: [user.id, storyID, action === 'up' ? 1 : -1],
-  });
+  await repositories.votes.create({ userId: user.id, storyId: parseInt(storyID, 10), action });
 
   return Astro.redirect(from, 302);
 } catch (error) {

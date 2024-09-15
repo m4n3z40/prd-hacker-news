@@ -58,7 +58,7 @@ const currrentPath = path ?? Astro.url.pathname;
       {story.type !== 'comment' && story.url ? <span> | </span><a href={`/items/${story.id}`}>read post</a>: null}
       {rootStoryID ? <span> | </span><a href={`${currrentPath}#post-${rootStoryID}`}>root</a> : null}
       {parentStoryID ? <span> | </span><a href={`${currrentPath}#post-${parentStoryID}`}>parent</a> : null}
-      {showRootTitle && story.root_id && story.root_title ? <span> | on: </span><a href={`/items/${story.root_id}`}>{story.root_title}</a> : null}
+      {showRootTitle && story.root_id && story.root_title ? <span> | on: </span><a href={`/items/${story.root_id}#post-${story.id}`}>{story.root_title}</a> : null}
       {prevStoryID ? <span> | </span><a href={`${currrentPath}#post-${prevStoryID}`}>prev</a> : null}
       {nextStoryID ? <span> | </span><a href={`${currrentPath}#post-${nextStoryID}`}>next</a> : null}
     </div>

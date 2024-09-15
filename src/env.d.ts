@@ -1,6 +1,8 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
+type PostType = 'post' | 'comment' | 'job' | 'ask' | 'show';
+
 type Story = {
   id: number;
   title: string;
@@ -16,7 +18,7 @@ type Story = {
   root_id?: number;
   root_title?: string;
   kids?: number[];
-  type: string;
+  type: PostType;
   created_at: string;
 };
 
@@ -32,6 +34,11 @@ type User = {
 declare namespace App {
   interface Locals {
       db: import('@libsql/client').Client;
+      repositories: {
+        users: import('./repository/users').default;
+        stories: import('./repository/stories').default;
+        votes: import('./repository/votes').default;
+      };
       user?: User;
       loggedIn: boolean;
   }

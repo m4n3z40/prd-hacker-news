@@ -58,7 +58,7 @@ const userKarma = Astro.locals.user?.karma;
       ) : (user ? (
         <div class="logoutWrapper">
           <a href="/users/me">{user.username}</a> ({userKarma || 0}) |
-          <a href="/auth/destroy">logout</a>
+          <a href="/auth/destroy" data-astro-prefetch="false">logout</a>
         </div>
       ) : null)}
     </header>

@@ -3,50 +3,35 @@ import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostSummary from '../components/PostSummary.astro';
 
-const { db } = Astro.locals;
+const { repositories: { stories:storiesRepo } } = Astro.locals;
 const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
-const limit = 30;
-const offset = (page - 1) * limit;
+const perPage = 30;
+let comments:Story[] = [];
 
-const { rows: stories } = await db.execute({
-  sql: `
-SELECT
-	c.*,
-	u.username AS by,
-  s.id AS root_id,
-  s.title AS root_title,
-	(SELECT COALESCE(SUM(weight), 0) FROM story_votes WHERE story_id = c.id) AS score
-FROM stories c
-JOIN users u ON c.user_id = u.id
-LEFT JOIN stories s ON c.parent_id = s.id
-WHERE c.type = 'comment'
-GROUP BY c.id
-ORDER BY created_at DESC
-LIMIT ${limit} OFFSET ${offset}
-`,
-  args: [],
-});
+const totalCount = await storiesRepo.countAll({ type: 'comment' });
 
-const { rows: [{ count: totalCount }] } = await db.execute(`SELECT COUNT(id) AS count FROM stories WHERE type = 'comment'`);
+if (totalCount > 0) {
+  comments = await storiesRepo.getAllComments({ page, perPage });
+}
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---
 <MainLayout>
   {flashErrorVote && <Error>{flashErrorVote}</Error>}
   <ol class="commentsTimeline">
-    {stories.map(story => (
+    {comments.map(story => (
       <li class="storyItem">
         <PostSummary
-          story={story as unknown as Story}
-          path={`/items/${story.parent_id}`}
-          parentStoryID={story.parent_id as number}
+          story={story}
+          path={`/items/${story.root_id}`}
+          parentStoryID={story.parent_id}
           showText
           showRootTitle
         />
       </li>
     ))}
   </ol>
-  {offset + limit <= (totalCount as number) && (
+  {page * perPage < totalCount && (
     <div class="moreLink">
       <a href={`/?page=${page + 1}`}>More</a>
     </div>

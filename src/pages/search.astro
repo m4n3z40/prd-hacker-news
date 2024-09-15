@@ -3,43 +3,19 @@ import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostSummary from '../components/PostSummary.astro';
 
-const { db } = Astro.locals;
+const { repositories: { stories:storiesRepo } } = Astro.locals;
 const by = Astro.url.searchParams.get('user');
 const domain = Astro.url.searchParams.get('site');
 const q = Astro.url.searchParams.get('q');
 const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
-const limit = 30;
-const offset = (page - 1) * limit;
+const perPage = 30;
+let stories:Story[] = [];
 
-const { rows: [{ count: totalCount }] } = await db.execute({
-    sql: `SELECT COUNT(s.id) AS count
-FROM stories s
-JOIN users u ON s.user_id = u.id
-WHERE type = 'post'
-${by ? 'AND u.username = ?' : ''}
-${domain ? 'AND s.domain = ?' : ''}
-${q ? 'AND s.title LIKE ?' : ''}`,
-    args: [by, domain, q && `%${q}%`].filter(Boolean),
-  });
+const totalCount = await storiesRepo.countAll({ by, domain, title: q });
 
-const { rows: stories } = totalCount as number > 0 ? await db.execute({
-  sql: `SELECT
-	s.*,
-	u.username AS by,
-	COUNT(c.id) AS descendants,
-	(SELECT COALESCE(SUM(weight), 0) FROM story_votes WHERE story_id = s.id) AS score
-FROM stories s
-JOIN users u ON s.user_id = u.id
-LEFT JOIN stories c ON s.id = c.parent_id
-WHERE s.type = 'post'
-${by ? 'AND u.username = ?' : ''}
-${domain ? 'AND s.domain = ?' : ''}
-${q ? 'AND s.title LIKE ?' : ''}
-GROUP BY s.id
-ORDER BY score DESC, created_at DESC
-LIMIT ${limit} OFFSET ${offset}`,
-  args: [by, domain, q && `%${q}%`].filter(Boolean),
-}) : { rows: [] };
+if (totalCount > 0) {
+  stories = await storiesRepo.getAll({ by, domain, title: q, page, perPage });
+}
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---
@@ -52,7 +28,7 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
       </li>
     ))}
   </ol>
-  {offset + limit <= (totalCount as number) && (
+  {page * perPage <= totalCount && (
     <div class="moreLink">
       <a href={`/?page=${page + 1}${by ? `&user=${by}` : ''}${domain ? `&site=${domain}` : ''}${q ? `&q=${q}` : ''}`}>More</a>
     </div>
