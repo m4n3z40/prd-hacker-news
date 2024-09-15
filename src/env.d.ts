@@ -34,11 +34,6 @@ type User = {
 declare namespace App {
   interface Locals {
       db: import('@libsql/client').Client;
-      repositories: {
-        users: import('./repositories/users').default;
-        stories: import('./repositories/stories').default;
-        votes: import('./repositories/votes').default;
-      };
       user?: User;
       loggedIn: boolean;
   }

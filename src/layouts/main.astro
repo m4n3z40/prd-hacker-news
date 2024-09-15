@@ -1,16 +1,21 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
+import VotesRepository from '../repositories/Votes';
 
 export interface Props {
   title?: string;
   headerTitle?: string;
   hideNavigation?: boolean;
   hideLogin?: boolean;
+  userKarma?: number;
 }
 
+const { db } = Astro.locals;
+const votesRepo = new VotesRepository(db);
 const user = Astro.cookies.get('user')?.json();
 const { title = 'Product Hacker News', headerTitle, hideNavigation, hideLogin } = Astro.props;
-const userKarma = Astro.locals.user?.karma;
+
+const userKarma = Astro.props.userKarma ?? (user ? await votesRepo.getUserKarma(user.id) : 0);
 ---
 
 <html>

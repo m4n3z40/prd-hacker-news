@@ -1,9 +1,11 @@
 ---
+import StoriesRepository from '../repositories/Stories';
 import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostSummary from '../components/PostSummary.astro';
 
-const { repositories: { stories:storiesRepo } } = Astro.locals;
+const { db } = Astro.locals;
+const storiesRepo = new StoriesRepository(db);
 const list = (Astro.url.searchParams.get('list') || 'top') as 'top' | 'new';
 const postType = (Astro.url.searchParams.get('type') || 'post') as PostType;
 const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);

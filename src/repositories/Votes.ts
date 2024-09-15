@@ -18,6 +18,6 @@ export default class VotesRepository {
       args: [userId],
     });
 
-    return rows[0]?.karma ?? 0;
+    return rows[0]?.karma as number ?? 0;
   }
 }

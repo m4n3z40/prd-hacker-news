@@ -1,15 +1,18 @@
 ---
-const { loggedIn, repositories, user } = Astro.locals;
+import VotesRepository from "../../repositories/Votes";
+
+const { loggedIn, user } = Astro.locals;
 
 if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
+const votesRepo = new VotesRepository(Astro.locals.db);
 const from = Astro.url.searchParams.get('from');
 const [action, storyID] = Astro.params.action.split('/') as ['up' | 'down', string];
 
 try {
-  await repositories.votes.create({ userId: user.id, storyId: parseInt(storyID, 10), action });
+  await votesRepo.create({ userId: user.id, storyId: parseInt(storyID, 10), action });
 
   return Astro.redirect(from, 302);
 } catch (error) {

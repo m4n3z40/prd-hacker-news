@@ -1,21 +1,25 @@
 ---
 import MainLayout from '../../layouts/main.astro';
+import VotesRepository from '../../repositories/Votes';
 
 if (!Astro.locals.loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
-const { user } = Astro.locals;
+const { db, user } = Astro.locals;
+const votesRepo = new VotesRepository(db);
+const userKarma = await votesRepo.getUserKarma(user.id);
 ---
 <MainLayout
   title="Product Hacker News | Your Profile"
+  userKarma={userKarma}
   hideLogin
 >
   <section>
     <h1>Your Profile</h1>
     <p>Username: {user.username}</p>
     <p>Created: {user.created_at}</p>
-    <p>Karma: {user.karma}</p>
+    <p>Karma: {userKarma}</p>
   </section>
 </MainLayout>
 

@@ -1,12 +1,16 @@
 ---
-const { loggedIn, repositories, user } = Astro.locals;
+import StoriesRepository from "../../repositories/Stories";
+
+const { loggedIn, db, user } = Astro.locals;
 
 if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
 try {
+  const storiesRepo = new StoriesRepository(db);
   const from = Astro.url.searchParams.get('from');
+
   const formData = await Astro.request.formData();
 
   const title = formData.get('title') as string;
@@ -15,7 +19,7 @@ try {
   const type = formData.get('type') as string as PostType || 'post';
   const parentID = parseInt(formData.get('parentId') as string, 10) || null;
 
-  const story = await repositories.stories.create({
+  const story = await storiesRepo.create({
     title: title || '',
     url,
     text,

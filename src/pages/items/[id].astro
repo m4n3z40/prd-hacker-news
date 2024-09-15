@@ -1,4 +1,5 @@
 ---
+import StoriesRepository from '../../repositories/Stories';
 import MainLayout from '../../layouts/main.astro';
 import Error from '../../components/Error.astro';
 import MainStoryContainer from '../../components/MainStoryContainer.astro';
@@ -6,7 +7,8 @@ import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 import CommentTimeline from '../../components/CommentTimeline.astro';
 
-const { repositories: { stories: storiesRepo }, user } = Astro.locals;
+const { db, user } = Astro.locals;
+const storiesRepo = new StoriesRepository(db);
 const id = parseInt(Astro.params.id, 10);
 
 const story = await storiesRepo.getById(id);
