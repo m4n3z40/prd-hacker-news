@@ -13,12 +13,21 @@ export default class UsersRepository {
     return lastInsertRowid;
   }
 
-  async getByLoginData({ username, password }: { username: string; password: string }): Promise<Story | null> {
+  async getByUsername(username: string): Promise<User | null> {
+    const { rows: [user] } = await this.db.execute({
+      sql: 'SELECT id, username, role, created_at FROM users WHERE username = ?',
+      args: [username],
+    });
+
+    return user as object as User ?? null;
+  }
+
+  async getByLoginData({ username, password }: { username: string; password: string }): Promise<User | null> {
     const { rows: [user] } = await this.db.execute({
       sql: 'SELECT id, username, role, created_at FROM users WHERE username = ? AND password = ?',
       args: [username, hashPassword(password)],
     });
 
-    return user as object as Story ?? null;
+    return user as object as User ?? null;
   }
 }

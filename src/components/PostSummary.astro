@@ -64,7 +64,7 @@ const storySlug = slugify(story.title, { lower: true, strict: true });
     </div>
     <div class="postSummary__meta">
       {!Number.isNaN(story.score) ? <span>{story.score} {story.score === 1 ? 'point' : 'points'} by</span> : null}
-      <a href={`/search?user=${story.by}`}>{story.by}</a>
+      <a href={`/users/${story.by}`}>{story.by}</a>
       <a href={`/stories/${story.id}/${storySlug}`}>{story.time_ago} ago</a>
       {
         story.descendants > 0

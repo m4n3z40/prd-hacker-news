@@ -1,0 +1,33 @@
+---
+import MainLayout from '../../layouts/main.astro';
+import VotesRepository from '../../repositories/Votes';
+import UsersRepository from '../../repositories/Users';
+
+const { locals: { db }, params } = Astro;
+const votesRepo = new VotesRepository(db);
+const usersRepo = new UsersRepository(db);
+const user = await usersRepo.getByUsername(params.username);
+
+const userKarma = user ? await votesRepo.getUserKarma(user.id) : 0;
+---
+<MainLayout
+  title={`Product Hacker News | ${user.username}'s Profile`}
+  userKarma={userKarma}
+  hideLogin
+>
+  <section>
+    <h1>{user.username}'s Profile</h1>
+    <p>Username: {user.username}</p>
+    <p>Created: {user.created_at}</p>
+    <p>Karma: {userKarma}</p>
+    <p><a href={`/search?user=${user.username}`}>{user.username}'s Submissions</a></p>
+  </section>
+</MainLayout>
+
+<style>
+  section {
+    margin: 0 auto;
+    max-width: 350px;
+  }
+</style>
+
