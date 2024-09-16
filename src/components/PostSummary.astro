@@ -4,6 +4,7 @@ import createStory from '../lib/createStory.ts';
 
 export interface Props {
   story: Story;
+  titleEl?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
   showText?: boolean;
   showReplyBtn?: boolean;
   showRootTitle?: boolean;
@@ -27,9 +28,21 @@ const getTitlePrefix = (story: Story) => {
   }
 };
 
-const { story: storyData, showText = false, showReplyBtn = false, rootStoryID, parentStoryID, showRootTitle, prevStoryID, nextStoryID, path } = Astro.props;
+const {
+  story: storyData,
+  titleEl = 'h3',
+  showText = false,
+  showReplyBtn = false,
+  rootStoryID,
+  parentStoryID,
+  showRootTitle,
+  prevStoryID,
+  nextStoryID,
+  path,
+} = Astro.props;
 const story = createStory(storyData);
 const currrentPath = path ?? Astro.url.pathname;
+const Title = titleEl;
 ---
 <div class="postSummary" id={`post-${story.id}`}>
   <div class:list={['postSummary__header', { 'postSummary__header--noTitle': !story.title }]}>
@@ -40,7 +53,8 @@ const currrentPath = path ?? Astro.url.pathname;
       {story.title ? (
         <div class="postSummary__titleWrapper">
           <a href={story.url ? story.url : `/items/${story.id}`} target={story.url ? '_blank' : '_self'}>
-            <h3>{getTitlePrefix(story)}{story.title}{story.url ? <i>↗</i> : null}</h3>
+
+            <Title>{getTitlePrefix(story)}{story.title}{story.url ? <i>↗</i> : null}</Title>
           </a>
           {story.domain ? <a href={`/search?site=${story.domain}`} class="postSummary__domain">({story.domain})</a> : null}
         </div>
@@ -104,7 +118,12 @@ const currrentPath = path ?? Astro.url.pathname;
     text-decoration: none;
   }
 
-  .postSummary__titleWrapper h3 {
+  .postSummary__titleWrapper h1,
+  .postSummary__titleWrapper h2,
+  .postSummary__titleWrapper h3,
+  .postSummary__titleWrapper h4,
+  .postSummary__titleWrapper h5,
+  .postSummary__titleWrapper h6 {
     color: #000000;
     margin: 0;
     display: inline-block;
@@ -114,7 +133,12 @@ const currrentPath = path ?? Astro.url.pathname;
     font-weight: normal;
   }
 
-  .postSummary__titleWrapper h3 > i {
+  .postSummary__titleWrapper h1 > i,
+  .postSummary__titleWrapper h2 > i,
+  .postSummary__titleWrapper h3 > i,
+  .postSummary__titleWrapper h4 > i,
+  .postSummary__titleWrapper h5 > i,
+  .postSummary__titleWrapper h6 > i {
     font-size: 10px;
     display: inline-block;
     vertical-align: middle;

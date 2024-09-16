@@ -21,7 +21,7 @@ if (totalCount > 0) {
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---
-<MainLayout>
+<MainLayout title={`Product Hacker News | Search results for "${q}"`}>
   {flashErrorVote && <Error>{flashErrorVote}</Error>}
   <ol class="storiesTimeline">
     {stories.map(story => (

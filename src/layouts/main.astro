@@ -4,29 +4,59 @@ import VotesRepository from '../repositories/Votes';
 
 export interface Props {
   title?: string;
+  description?: string;
+  keywords?: string[];
+  contentType?: 'website' | 'article';
   headerTitle?: string;
   hideNavigation?: boolean;
   hideLogin?: boolean;
   userKarma?: number;
 }
 
-const { db } = Astro.locals;
+const { locals: { db }, cookies, props, url } = Astro;
 const votesRepo = new VotesRepository(db);
-const user = Astro.cookies.get('user')?.json();
-const { title = 'Product Hacker News', headerTitle, hideNavigation, hideLogin } = Astro.props;
+const user = cookies.get('user')?.json();
+const {
+  title = 'Product Hacker News | Discuss with other people that also loves products',
+  description = 'An enhanced clone clone of Hacker News, for Product Hackers.',
+  keywords = ['hacker news', 'product', 'coding', 'design', 'forum', 'discussion'],
+  contentType = 'website',
+  headerTitle,
+  hideNavigation,
+  hideLogin
+} = props;
 
-const userKarma = Astro.props.userKarma ?? (user ? await votesRepo.getUserKarma(user.id) : 0);
+const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.id) : 0);
 ---
-
+<!DOCTYPE html>
 <html>
   <head>
     <title>{title}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="An enhanced clone clone of Hacker News, for Product Hackers.">
-    <meta name="keywords" content="hacker news, product, coding, design, forum, discussion">
+    <meta name="description" content={description}>
+    <meta name="keywords" content={keywords.join(', ')}>
+    <meta property="og:title" content={title}>
+    <meta property="og:type" content={contentType}>
+    <meta property="og:url" content={url.href}>
+    <meta property="og:descrition" content={description}>
+    <meta property="og:image" content="/y18.png">
     <link rel="icon" href="/y18.svg">
     <ViewTransitions />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": url.href,
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": url.protocol + '//' + url.host + "/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    })}></script>
+    <slot name="head" />
   </head>
   <body>
     <header class:list={['mainHeader', { mainHeader__hiddenNavigation: hideNavigation, mainHeader__hiddenLogin: hideLogin }]}>
