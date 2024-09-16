@@ -1,4 +1,5 @@
 ---
+import slugify from 'slugify';
 import StoriesRepository from "../../repositories/Stories";
 
 const { loggedIn, db, user } = Astro.locals;
@@ -28,7 +29,7 @@ try {
     parent_id: parentID,
   } as Story);
 
-  return Astro.redirect(from || `/items/${story.id}`);
+  return Astro.redirect(from || `/stories/${story.id}/${slugify(story.title, { lower: true })}`);
 } catch (error) {
   console.error(error);
 

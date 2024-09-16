@@ -7,7 +7,7 @@ export interface Props {
 
 const { parentID, rootID, submitLabel = 'add comment' } = Astro.props;
 ---
-<form action={`/items/new${rootID && `?from=/items/${rootID}`}`} method="POST">
+<form action={`/stories/new${rootID && `?from=/stories/${rootID}`}`} method="POST">
   <input type="hidden" name="type" value="comment"/>
   <input type="hidden" name="parentId" value={parentID}/>
   <textarea name="text" rows="8" cols="80" wrap="virtual" required></textarea>

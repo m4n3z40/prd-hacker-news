@@ -1,4 +1,5 @@
 ---
+import slugify from 'slugify';
 import StoriesRepository from '../repositories/Stories';
 import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
@@ -25,7 +26,7 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
       <li class="storyItem">
         <PostSummary
           story={story}
-          path={`/items/${story.root_id}`}
+          path={`/stories/${story.root_id}/${slugify(story.root_title, { lower: true })}`}
           parentStoryID={story.parent_id}
           showText
           showRootTitle

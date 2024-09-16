@@ -26,7 +26,7 @@ const flashError = Astro.cookies.get('flash_error')?.value;
       {flashError}
     </div>
   )}
-  <form action="/items/new" method="POST" class="newStoryForm">
+  <form action="/stories/new" method="POST" class="newStoryForm">
     <div class="newStoryForm__field">
       <label for="type">type</label>
       <select name="type" id="type" required>
