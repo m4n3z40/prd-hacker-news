@@ -44,7 +44,7 @@ const {
 const story = createStory(storyData);
 const currrentPath = path ?? Astro.url.pathname;
 const Title = titleEl;
-const storySlug = slugify(story.title, { lower: true });
+const storySlug = slugify(story.title, { lower: true, strict: true });
 ---
 <div class="postSummary" id={`post-${story.id}`}>
   <div class:list={['postSummary__header', { 'postSummary__header--noTitle': !story.title }]}>
@@ -74,7 +74,7 @@ const storySlug = slugify(story.title, { lower: true });
       {story.type !== 'comment' && story.url ? <span> | </span><a href={`/stories/${story.id}/${storySlug}`}>read post</a>: null}
       {rootStoryID ? <span> | </span><a href={`${currrentPath}#post-${rootStoryID}`}>root</a> : null}
       {parentStoryID ? <span> | </span><a href={`${currrentPath}#post-${parentStoryID}`}>parent</a> : null}
-      {showRootTitle && story.root_id && story.root_title ? <span> | on: </span><a href={`/stories/${story.root_id}/${slugify(story.root_title, { lower: true })}#post-${story.id}`}>{story.root_title}</a> : null}
+      {showRootTitle && story.root_id && story.root_title ? <span> | on: </span><a href={`/stories/${story.root_id}/${slugify(story.root_title, { lower: true, strict: true })}#post-${story.id}`}>{story.root_title}</a> : null}
       {prevStoryID ? <span> | </span><a href={`${currrentPath}#post-${prevStoryID}`}>prev</a> : null}
       {nextStoryID ? <span> | </span><a href={`${currrentPath}#post-${nextStoryID}`}>next</a> : null}
     </div>

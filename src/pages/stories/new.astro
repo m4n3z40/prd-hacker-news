@@ -29,7 +29,7 @@ try {
     parent_id: parentID,
   } as Story);
 
-  return Astro.redirect(from || `/stories/${story.id}/${slugify(story.title, { lower: true })}`);
+  return Astro.redirect(from || `/stories/${story.id}/${slugify(story.title, { lower: true, strict: true })}`);
 } catch (error) {
   console.error(error);
 

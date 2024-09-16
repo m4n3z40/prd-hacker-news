@@ -26,7 +26,7 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
       <li class="storyItem">
         <PostSummary
           story={story}
-          path={`/stories/${story.root_id}/${slugify(story.root_title, { lower: true })}`}
+          path={`/stories/${story.root_id}/${slugify(story.root_title, { lower: true, strict: true })}`}
           parentStoryID={story.parent_id}
           showText
           showRootTitle
