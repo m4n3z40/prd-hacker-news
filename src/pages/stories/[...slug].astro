@@ -54,7 +54,7 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
       "interactionType": "https://schema.org/DislikeAction",
       "userInteractionCount": story.score * -1
     },
-    "comments": comments.map(comment => ({
+    "comment": comments.map(comment => ({
       "@type": "Comment",
       "text": comment.text,
       "author": {
