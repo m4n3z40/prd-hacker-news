@@ -5,7 +5,7 @@ type GetAllStoriesOpts = {
   by?: string;
   domain?: string;
   title?: string;
-  list?: 'new' | 'top';
+  order?: 'new' | 'top';
   perPage?: number;
   page?: number;
 };
@@ -40,7 +40,7 @@ export default class StoriesRepository {
     } as Story;
   }
 
-  async getAll({ type = 'post', by, domain, title, list = 'new', perPage = 30, page = 1 }:GetAllStoriesOpts = {}): Promise<Story[]> {
+  async getAll({ type = 'post', by, domain, title, order = 'new', perPage = 30, page = 1 }:GetAllStoriesOpts = {}): Promise<Story[]> {
     const limit = perPage;
     const offset = (page - 1) * limit;
 
@@ -66,7 +66,7 @@ export default class StoriesRepository {
       ${domain ? 'AND s.domain = ?' : ''}
       ${title ? 'AND s.title LIKE ?' : ''}
       GROUP BY s.id
-      ORDER BY ${list === 'top' ? 'score DESC, descendants DESC,' : ''} created_at DESC
+      ORDER BY ${order === 'top' ? 'score DESC, descendants DESC,' : ''} created_at DESC
       LIMIT ${limit} OFFSET ${offset}`,
       args: [type, by, domain, title && `%${title}%`].filter(Boolean),
     });

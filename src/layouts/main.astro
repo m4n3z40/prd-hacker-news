@@ -40,8 +40,8 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
     <meta property="og:type" content={contentType}>
     <meta property="og:url" content={url.href}>
     <meta property="og:descrition" content={description}>
-    <meta property="og:image" content="/y18.png">
-    <link rel="icon" href="/y18.svg">
+    <meta property="og:image" content="/phn.png">
+    <link rel="icon" href="/phn.png">
     <ViewTransitions />
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
@@ -61,7 +61,7 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
   <body>
     <header class:list={['mainHeader', { mainHeader__hiddenNavigation: hideNavigation, mainHeader__hiddenLogin: hideLogin }]}>
       <a href="/" class="brandImg">
-        <img src="/y18.svg" alt="Product Hacker News" />
+        <img src="/phn.png" alt="Product Hacker News" />
       </a>
       <div class="navWrapper">
         {headerTitle ? (
@@ -122,10 +122,18 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
   </body>
 </html>
 <style>
+  :global(@font-face) {
+    font-family: GeistSans;
+    src: url('/GeistVF.woff2') format('woff2'),
+         url('/GeistVF.woff') format('woff'),
+         url('/GeistVF.ttf') format('truetype');
+    font-display: swap;
+    font-weight: 100 900;
+  }
   :global(html), :global(body) {
-    font-family: Verdana, Geneva, sans-serif;
-    font-size: 10pt;
-    color: #828282;
+    font-family: GeistSans, Geneva, sans-serif;
+    font-size: 16px;
+    color: #000000;
     margin: 0;
   }
 
@@ -134,17 +142,23 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
     text-decoration: none;
   }
 
+  :global(a:hover) {
+    text-decoration: underline;
+  }
+
   .mainHeader {
-    background-color: #ff6600;
+    background-color: #ffffff;
     display: flex;
     align-items: center;
-    padding: 2px;
+    padding: 16px;
+    border-bottom: rgb(228, 228, 231) 1px solid;
   }
 
   .brandImg > img {
-    border: 1px solid #fff;
+    border: 1px solid #000000;
     width: 18px;
     height: 18px;
+    padding: 2px;
     line-height: 0;
     display: block;
   }
@@ -172,15 +186,15 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
     content: "|";
     margin: 0 4px;
     color: #000000;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .navWrapper > nav a {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .loginWrapper, .logoutWrapper {
-    font-size: 12px;
+    font-size: 14px;
     color: #000000;
     margin-left: auto;
     margin-right: 10px;
@@ -188,7 +202,7 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
   }
 
   main, .mainFooter {
-    background-color: #f6f6ef;
+    background-color: rgb(243, 244, 246);
   }
 
   main {
@@ -201,8 +215,9 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
   }
 
   .mainFooter {
-    border-top: 2px solid #ff6600;
-    padding: 15px 5px;
+    background: #ffffff;
+    border-top: 2px solid rgb(229, 231, 235);
+    padding: 16px;
   }
 
   .mainFooter nav ul {
@@ -218,11 +233,11 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
     content: "|";
     margin: 0 4px;
     color: #000000;
-    font-size: 11px;
+    font-size: 14px;
   }
 
   .mainFooter nav a {
-    font-size: 11px;
+    font-size: 14px;
   }
 
   .searchWrapper {
@@ -237,13 +252,7 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
   }
 
   @media (min-width: 768px) {
-    .mainHeader, main, .mainFooter {
-      min-width: 768px;
-      margin: 0 auto;
-    }
-
     main {
-      width: 85%;
       min-height: calc(100vh - 162px);
     }
 
@@ -253,16 +262,15 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
 
     .mainHeader {
       margin-top: 10px;
-      width: calc(85% - 10px);
     }
 
     .mainFooter {
-      width: calc(85% - 10px);
       margin-bottom: 10px;
     }
 
     .navWrapper {
       display: flex;
+      align-items: center;
     }
 
     .navWrapper > nav {

@@ -1,0 +1,84 @@
+---
+import { undefined } from 'astro:schema';
+import PostSummary from '../components/PostSummary.astro';
+
+export interface Props {
+  items: Story[];
+  page?: number;
+  perPage?: number;
+  totalCount: number;
+  buildPostSummaryProps?: (story:Story) => object;
+  buildPaginationURL?: (searchParams:URLSearchParams) => string;
+}
+
+const defaultBuildPostSummaryProps = () => ({ });
+
+const defaultBuildPaginationURL = (searchParams:URLSearchParams) => {
+  const url = new URL(Astro.url.href);
+  url.search = searchParams.toString();
+  return url.href;
+};
+
+const {
+  items,
+  page = 1,
+  perPage = 30,
+  totalCount = 0,
+  buildPostSummaryProps = defaultBuildPostSummaryProps,
+  buildPaginationURL = defaultBuildPaginationURL
+} = Astro.props;
+const searchParams = new URLSearchParams({ page: (page + 1).toString() });
+---
+<ol class="storiesTimeline">
+  {items.map(story => (
+    <li class="storyItem">
+      <PostSummary story={story} {...buildPostSummaryProps(story)} />
+    </li>
+  ))}
+</ol>
+{page * perPage < totalCount && (
+  <div class="moreLink">
+    <a href={buildPaginationURL(searchParams)}>More</a>
+  </div>
+)}
+<style>
+  .storiesTimeline {
+    margin: 0;
+    padding: 16px;
+    list-style: none;
+  }
+
+  .storyItem {
+    display: flex;
+    background: #ffffff;
+    border: 1px solid rgb(229, 231, 235);
+    padding: 16px;
+    border-radius: 8px;
+    counter-increment: storyItem;
+    transition: box-shadow 0.2s ease 0s;
+    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
+  }
+
+  .storyItem:hover {
+    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
+  }
+
+  .storyItem:not(:first-child) {
+    margin-top: 16px;
+  }
+
+  .storyItem::before {
+    content: counter(storyItem) ". ";
+    font-weight: 700;
+    color: rgb(209, 213, 219);
+    font-size: 24px;
+  }
+
+  .moreLink {
+    margin-left: 48px;
+  }
+
+  .moreLink > a {
+    font-size: 15px;
+  }
+</style>

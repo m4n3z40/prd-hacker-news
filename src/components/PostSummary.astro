@@ -49,8 +49,8 @@ const storySlug = slugify(story.title, { lower: true, strict: true });
 <div class="postSummary" id={`post-${story.id}`}>
   <div class:list={['postSummary__header', { 'postSummary__header--noTitle': !story.title }]}>
     <div class="postSummary__title">
-      <a href={`/vote/up/${story.id}?from=${currrentPath}`} class="postSummary__voteLink" data-astro-prefetch="false">
-        <img src="/triangle.svg" alt="Vote up" width="13" height="13">
+      <a href={`/vote/up/${story.id}?from=${currrentPath}`} class="postSummary__voteLink" data-astro-prefetch="false" rel="nofollow">
+        <img src="/arrow.png" alt="Vote up" width="20" height="20">
       </a>
       {story.title ? (
         <div class="postSummary__titleWrapper">
@@ -82,21 +82,12 @@ const storySlug = slugify(story.title, { lower: true, strict: true });
   <div class="postSummary__body">
     <!-- TODO: DANGER! SANITIZE MARKDOWN OUTPUT -->
     {showText && story.text ? <div class="postSummary__text" set:html={marked.parse(story.text)}></div> : null}
-    {showReplyBtn ? <div class="postSummary__replyLink"><a href={`/reply/${story.id}`}>reply</a></div> : null}
+    {showReplyBtn ? <div class="postSummary__replyLink"><a href={`/reply/${story.id}`} rel="nofollow">reply</a></div> : null}
   </div>
 </div>
 
 <style>
   .postSummary {
-    font-size: 12px;
-  }
-
-  .postSummary a {
-    color: #828282;
-  }
-
-  .postSummary a:hover {
-    text-decoration: underline;
   }
 
   .postSummary__header.postSummary__header--noTitle {
@@ -108,16 +99,20 @@ const storySlug = slugify(story.title, { lower: true, strict: true });
   }
 
   .postSummary__voteLink {
-    width: 13px;
-    height: 13px;
+
+  }
+
+  .postSummary__voteLink > img {
+    display: block;
+    margin-left: 5px;
   }
 
   .postSummary__titleWrapper {
     margin-left: 5px;
   }
 
-  .postSummary__titleWrapper a:has(h3):hover {
-    text-decoration: none;
+  .postSummary__titleWrapper a:has(h3):hover h3 {
+    text-decoration: underline;
   }
 
   .postSummary__titleWrapper h1,
@@ -130,8 +125,8 @@ const storySlug = slugify(story.title, { lower: true, strict: true });
     margin: 0;
     display: inline-block;
     vertical-align: middle;
-    font-size: 15px;
-    line-height: 16px;
+    font-size: 18px;
+    line-height: 18px;
     font-weight: normal;
   }
 
@@ -141,25 +136,27 @@ const storySlug = slugify(story.title, { lower: true, strict: true });
   .postSummary__titleWrapper h4 > i,
   .postSummary__titleWrapper h5 > i,
   .postSummary__titleWrapper h6 > i {
-    font-size: 10px;
+    font-size: 12px;
     display: inline-block;
     vertical-align: middle;
     border: 1px solid #828282;
     padding: 2px;
-    line-height: 10px;
+    line-height: 12px;
     border-radius: 3px;
     margin-left: 3px;
     color: #828282;
   }
 
   .postSummary__domain {
-    font-size: 11px;
+    font-size: 12px;
     display: inline-block;
     vertical-align: middle;
   }
 
   .postSummary__meta, .postSummary__text, .postSummary__replyLink {
-    padding-left: 18px;
+    font-size: 12px;
+    padding-top: 8px;
+    padding-left: 12px;
   }
 
   .postSummary__title:not(:has(.postSummary__titleWrapper)) {
@@ -168,6 +165,7 @@ const storySlug = slugify(story.title, { lower: true, strict: true });
 
   .postSummary__title:not(:has(.postSummary__titleWrapper)) + .postSummary__meta {
     display: inline-block;
+    padding-top: 0;
     padding-left: 0;
   }
 
@@ -187,8 +185,7 @@ const storySlug = slugify(story.title, { lower: true, strict: true });
   }
 
   .postSummary__replyLink > a {
-    font-size: 10px;
-    text-decoration: underline;
+    font-size: 12px;
   }
 </style>
 
