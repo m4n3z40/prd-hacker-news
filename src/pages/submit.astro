@@ -1,7 +1,8 @@
 ---
+import VotesRepository from '../repositories/Votes';
 import MainLayout from '../layouts/main.astro';
 
-const { loggedIn, user } = Astro.locals;
+const { loggedIn, db, user } = Astro.locals;
 const storyTypesAndKarmaReqs = {
   'post': 0,
   'ask': 10,
@@ -12,6 +13,10 @@ const storyTypesAndKarmaReqs = {
 if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
+
+const votesRepo = new VotesRepository(db);
+
+user.karma = await votesRepo.getUserKarma(user.id);
 
 const flashError = Astro.cookies.get('flash_error')?.value;
 ---
