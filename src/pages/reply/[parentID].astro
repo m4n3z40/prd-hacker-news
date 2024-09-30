@@ -5,13 +5,13 @@ import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 
-const { loggedIn, db } = Astro.locals;
+const { loggedIn } = Astro.locals;
 
 if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
-const storiesRepo = new StoriesRepository(db);
+const storiesRepo = new StoriesRepository();
 const { parentID } = Astro.params;
 
 const parentStory = await storiesRepo.getById(parseInt(parentID, 10));;
@@ -23,6 +23,7 @@ if (rootStory.parent_id !== null) {
 
   parentStory.root_id = rootStory.id;
   parentStory.root_title = rootStory.title;
+  parentStory.root_slug = rootStory.slug;
 }
 ---
 <MainLayout

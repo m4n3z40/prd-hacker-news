@@ -76,7 +76,7 @@ const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.i
         {!hideNavigation ? (
           <nav>
             <ul>
-              <li><a href="/?list=newest">new</a></li>
+              <li><a href="/?order=newest">new</a></li>
               <li><a href="/comments">comments</a></li>
               <li><a href="/?type=ask">ask</a></li>
               <li><a href="/?type=show">show</a></li>

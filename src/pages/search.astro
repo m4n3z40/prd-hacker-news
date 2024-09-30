@@ -4,20 +4,14 @@ import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostList from '../components/PostList.astro';
 
-const { db } = Astro.locals;
-const storiesRepo = new StoriesRepository(db);
+const storiesRepo = new StoriesRepository();
 const by = Astro.url.searchParams.get('user');
 const domain = Astro.url.searchParams.get('site');
 const q = Astro.url.searchParams.get('q');
 const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
 const perPage = 30;
-let stories:Story[] = [];
 
-const totalCount = await storiesRepo.countAll({ by, domain, title: q });
-
-if (totalCount > 0) {
-  stories = await storiesRepo.getAll({ by, domain, title: q, page, perPage });
-}
+const { stories, meta } = await storiesRepo.getAll({ by, domain, title: q, page, perPage });
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---
@@ -27,12 +21,12 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
     items={stories}
     page={page}
     perPage={perPage}
-    totalCount={totalCount}
+    totalCount={meta.total}
     buildPaginationURL={searchParams => {
       searchParams.set('q', q);
       searchParams.set('user', by);
       searchParams.set('site', domain);
-      const url = new URL('/');
+      const url = new URL(Astro.url.pathname, Astro.url.origin);
       url.search = searchParams.toString();
       return url.href;
     }}

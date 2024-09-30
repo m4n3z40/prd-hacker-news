@@ -1,7 +1,5 @@
 ---
 import { marked } from 'marked';
-import slugify from 'slugify';
-import createStory from '../lib/createStory.ts';
 
 export interface Props {
   story: Story;
@@ -30,7 +28,7 @@ const getTitlePrefix = (story: Story) => {
 };
 
 const {
-  story: storyData,
+  story,
   titleEl = 'h3',
   showText = false,
   showReplyBtn = false,
@@ -41,10 +39,8 @@ const {
   nextStoryID,
   path,
 } = Astro.props;
-const story = createStory(storyData);
 const currrentPath = path ?? Astro.url.pathname;
 const Title = titleEl;
-const storySlug = slugify(story.title, { lower: true, strict: true });
 ---
 <div class="postSummary" id={`post-${story.id}`}>
   <div class:list={['postSummary__header', { 'postSummary__header--noTitle': !story.title }]}>
@@ -54,7 +50,7 @@ const storySlug = slugify(story.title, { lower: true, strict: true });
       </a>
       {story.title ? (
         <div class="postSummary__titleWrapper">
-          <a href={story.url ? story.url : `/stories/${story.id}/${storySlug}`} target={story.url ? '_blank' : '_self'}>
+          <a href={story.url ? story.url : `/stories/${story.id}/${story.slug}`} target={story.url ? '_blank' : '_self'}>
 
             <Title>{getTitlePrefix(story)}{story.title}{story.url ? <i>↗</i> : null}</Title>
           </a>
@@ -65,16 +61,16 @@ const storySlug = slugify(story.title, { lower: true, strict: true });
     <div class="postSummary__meta">
       {!Number.isNaN(story.score) ? <span>{story.score} {story.score === 1 ? 'point' : 'points'} by</span> : null}
       <a href={`/users/${story.by}`}>{story.by}</a>
-      <a href={`/stories/${story.id}/${storySlug}`}>{story.time_ago} ago</a>
+      <a href={`/stories/${story.id}/${story.slug}`}>{story.time_ago} ago</a>
       {
         story.descendants > 0
-          ? <span> | </span><a href={`/stories/${story.id}/${storySlug}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
+          ? <span> | </span><a href={`/stories/${story.id}/${story.slug}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
           : null
       }
-      {story.type !== 'comment' && story.url ? <span> | </span><a href={`/stories/${story.id}/${storySlug}`}>read post</a>: null}
+      {story.type !== 'comment' && story.url ? <span> | </span><a href={`/stories/${story.id}/${story.slug}`}>read post</a>: null}
       {rootStoryID ? <span> | </span><a href={`${currrentPath}#post-${rootStoryID}`}>root</a> : null}
       {parentStoryID ? <span> | </span><a href={`${currrentPath}#post-${parentStoryID}`}>parent</a> : null}
-      {showRootTitle && story.root_id && story.root_title ? <span> | on: </span><a href={`/stories/${story.root_id}/${slugify(story.root_title, { lower: true, strict: true })}#post-${story.id}`}>{story.root_title}</a> : null}
+      {showRootTitle && story.root_id && story.root_title ? <span> | on: </span><a href={`/stories/${story.root_id}/${story.root_slug}#post-${story.id}`}>{story.root_title}</a> : null}
       {prevStoryID ? <span> | </span><a href={`${currrentPath}#post-${prevStoryID}`}>prev</a> : null}
       {nextStoryID ? <span> | </span><a href={`${currrentPath}#post-${nextStoryID}`}>next</a> : null}
     </div>
