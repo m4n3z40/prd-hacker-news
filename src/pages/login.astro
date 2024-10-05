@@ -35,11 +35,7 @@ const createAccountFlashError = Astro.cookies.get('flash_error_new_account')?.va
   </section>
   <section class="createAccountForm">
     <h1>Create Account</h1>
-    {createAccountFlashError && (
-      <div class="flashErrorMsg">
-        {createAccountFlashError}
-      </div>
-    )}
+    {createAccountFlashError && <Error>{createAccountFlashError}</Error>}
     <form action="/users/new" method="POST">
       <div class="createAccountForm__field formField">
         <label for="create-username">username</label>

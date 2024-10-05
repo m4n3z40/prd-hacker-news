@@ -3,7 +3,7 @@ import UsersRepository from '../../repositories/Users';
 import MainLayout from '../../layouts/main.astro';
 
 try {
-  const usersRepo = new UsersRepository(Astro.locals.db);
+  const usersRepo = new UsersRepository(Astro.locals.baseApiUrl);
 
   const formData = await Astro.request.formData();
 

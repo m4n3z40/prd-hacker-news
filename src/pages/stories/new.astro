@@ -1,15 +1,14 @@
 ---
 import StoriesRepository from "../../repositories/Stories";
-import { undefined } from 'astro:schema';
 
-const { loggedIn, user } = Astro.locals;
+const { loggedIn, user, baseApiUrl } = Astro.locals;
 
 if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
 try {
-  const storiesRepo = new StoriesRepository();
+  const storiesRepo = new StoriesRepository(baseApiUrl);
   const from = Astro.url.searchParams.get('from');
 
   const formData = await Astro.request.formData();

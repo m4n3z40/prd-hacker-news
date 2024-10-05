@@ -1,6 +1,6 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
-import VotesRepository from '../repositories/Votes';
+import UsersRepository from '../repositories/Users';
 
 export interface Props {
   title?: string;
@@ -11,10 +11,10 @@ export interface Props {
   hideNavigation?: boolean;
   hideLogin?: boolean;
   userKarma?: number;
-}
+};
 
-const { locals: { db }, cookies, props, url } = Astro;
-const votesRepo = new VotesRepository(db);
+const { cookies, props, url, locals } = Astro;
+const usersRepo = new UsersRepository(locals.baseApiUrl);
 const user = cookies.get('user')?.json();
 const {
   title = 'Product Hacker News | Discuss with other people that also loves products',
@@ -26,7 +26,7 @@ const {
   hideLogin
 } = props;
 
-const userKarma = props.userKarma ?? (user ? await votesRepo.getUserKarma(user.id) : 0);
+const userKarma = props.userKarma ?? (user ? (await usersRepo.getByUsername(user.username)).karma : 0);
 ---
 <!DOCTYPE html>
 <html>

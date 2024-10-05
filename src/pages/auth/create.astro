@@ -2,7 +2,7 @@
 import UsersRepository from "../../repositories/Users";
 
 try {
-  const usersRepo = new UsersRepository(Astro.locals.db);
+  const usersRepo = new UsersRepository(Astro.locals.baseApiUrl);
   const formData = await Astro.request.formData();
 
   const username = formData.get('username') as string|null;

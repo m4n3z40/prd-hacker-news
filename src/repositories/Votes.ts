@@ -1,23 +1,29 @@
-import type { Client } from '@libsql/client';
-
 export default class VotesRepository {
-  constructor(private db: Client) {}
+  constructor(private baseApiUrl) {}
 
-  async create({ userId, storyId, action = 'up' }: { userId:number, storyId:number, action?:'up'|'down' }): Promise<bigint> {
-    const res = await this.db.execute({
-      sql: 'INSERT INTO story_votes (user_id, story_id, weight) VALUES (?, ?, ?)',
-      args: [userId, storyId, action === 'up' ? 1 : -1],
+  async create({ userId, storyId, action = 'up' }: { userId:number, storyId:number, action?:'up'|'down' }): Promise<Vote> {
+    const url = new URL(`${this.baseApiUrl}/votes`);
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        story_id: storyId,
+        action,
+      }),
     });
 
-    return res.lastInsertRowid;
-  }
+    if (!res.ok) {
+      const { message } = await res.json();
 
-  async getUserKarma(userId: number) {
-    const { rows } = await this.db.execute({
-      sql: 'SELECT SUM(weight)as karma FROM story_votes WHERE user_id = ?',
-      args: [userId],
-    });
+      throw new Error(message);
+    }
 
-    return rows[0]?.karma as number ?? 0;
+    const { result: vote } = await res.json();
+
+    return vote as object as Vote;
   }
 }

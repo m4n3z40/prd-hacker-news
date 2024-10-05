@@ -4,16 +4,18 @@ import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostList from '../components/PostList.astro';
 
-const storiesRepo = new StoriesRepository();
-const by = Astro.url.searchParams.get('user');
-const domain = Astro.url.searchParams.get('site');
-const q = Astro.url.searchParams.get('q');
-const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
+const { locals, url, cookies } = Astro;
+
+const storiesRepo = new StoriesRepository(locals.baseApiUrl);
+const by = url.searchParams.get('user');
+const domain = url.searchParams.get('site');
+const q = url.searchParams.get('q');
+const page = parseInt(url.searchParams.get('page') || '1', 10);
 const perPage = 30;
 
 const { stories, meta } = await storiesRepo.getAll({ by, domain, title: q, page, perPage });
 
-const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
+const flashErrorVote = cookies.get('flash_error_vote')?.value;
 ---
 <MainLayout title={`Product Hacker News | Search results for "${q}"`}>
   {flashErrorVote && <Error>{flashErrorVote}</Error>}

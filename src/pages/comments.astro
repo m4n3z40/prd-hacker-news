@@ -4,7 +4,7 @@ import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostList from '../components/PostList.astro';
 
-const storiesRepo = new StoriesRepository();
+const storiesRepo = new StoriesRepository(Astro.locals.baseApiUrl);
 const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
 const perPage = 30;
 

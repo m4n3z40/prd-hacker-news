@@ -4,16 +4,18 @@ import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostList from '../components/PostList.astro';
 
-const storiesRepo = new StoriesRepository();
+const { locals, url, cookies } = Astro;
 
-const postType = (Astro.url.searchParams.get('type') || 'post') as PostType;
-const order = (Astro.url.searchParams.get('order') || 'top') as 'top' | 'new';
-const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
+const storiesRepo = new StoriesRepository(locals.baseApiUrl);
+
+const postType = (url.searchParams.get('type') || 'post') as PostType;
+const order = (url.searchParams.get('order') || 'top') as 'top' | 'new';
+const page = parseInt(url.searchParams.get('page') || '1', 10);
 const perPage = 30;
 
 const { stories, meta } = await storiesRepo.getAll({ type: postType, order, page, perPage });
 
-const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
+const flashErrorVote = cookies.get('flash_error_vote')?.value;
 const postTypeError = ['post', 'ask', 'show', 'job'].some(t => t === postType) ? null : 'Invalid post type.';
 ---
 <MainLayout>

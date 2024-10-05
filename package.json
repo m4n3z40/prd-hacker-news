@@ -19,7 +19,6 @@
   "license": "ISC",
   "dependencies": {
     "@astrojs/sitemap": "^3.1.6",
-    "@libsql/client": "^0.14.0",
     "astro": "^4.15.9",
     "astro-aws-amplify": "^0.1.0",
     "marked": "^14.1.2"

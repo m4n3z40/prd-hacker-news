@@ -7,7 +7,7 @@ if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
-const votesRepo = new VotesRepository(Astro.locals.db);
+const votesRepo = new VotesRepository(Astro.locals.baseApiUrl);
 const from = Astro.url.searchParams.get('from');
 const [action, storyID] = Astro.params.action.split('/') as ['up' | 'down', string];
 

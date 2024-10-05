@@ -1,5 +1,3 @@
-import type { Client } from '@libsql/client';
-
 type GetAllStoriesOpts = {
   type?: PostType;
   by?: string;
@@ -33,10 +31,10 @@ type DescendantsResult = {
 };
 
 export default class StoriesRepository {
-  constructor() {}
+  constructor(private baseApiUrl) {}
 
   async create({ title, url, text, type, user_id, parent_id }:Story): Promise<Story> {
-    const apiUrl = new URL('http://localhost:8765/stories');
+    const apiUrl = new URL(`${this.baseApiUrl}/stories`);
 
     const res = await fetch(apiUrl, {
       method: 'POST',
@@ -65,7 +63,7 @@ export default class StoriesRepository {
   }
 
   async getAll({ type = 'post', by, domain, title, order = 'new', perPage = 30, page = 1 }:GetAllStoriesOpts = {}): Promise<StoryResult> {
-    const url = new URL('http://localhost:8765/stories');
+    const url = new URL(`${this.baseApiUrl}/stories`);
 
     if (type) url.searchParams.set('type', type);
     if (by) url.searchParams.set('by', by);
@@ -89,7 +87,7 @@ export default class StoriesRepository {
   }
 
   async getAllComments({ perPage = 30, page = 1 } = {}): Promise<StoryResult> {
-    const url = new URL('http://localhost:8765/comments');
+    const url = new URL(`${this.baseApiUrl}/comments`);
 
     if (perPage) url.searchParams.set('perPage', perPage.toString());
     if (page) url.searchParams.set('page', page.toString());
@@ -108,7 +106,7 @@ export default class StoriesRepository {
   }
 
   async getById(id:number): Promise<Story | null> {
-    const url = new URL(`http://localhost:8765/stories/${id}`);
+    const url = new URL(`${this.baseApiUrl}/stories/${id}`);
 
     const res = await fetch(url);
 
@@ -124,7 +122,7 @@ export default class StoriesRepository {
   }
 
   async getDescendantsByParentId(parentId:number): Promise<DescendantsResult> {
-    const url = new URL(`http://localhost:8765/stories/${parentId}/descendants`);
+    const url = new URL(`${this.baseApiUrl}/stories/${parentId}/descendants`);
 
     const res = await fetch(url);
 
@@ -140,7 +138,7 @@ export default class StoriesRepository {
   }
 
   async getRootByDescendantId(id:number): Promise<Story | null> {
-    const url = new URL(`http://localhost:8765/stories/${id}/root`);
+    const url = new URL(`${this.baseApiUrl}/stories/${id}/root`);
 
     const res = await fetch(url);
 

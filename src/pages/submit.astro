@@ -1,8 +1,9 @@
 ---
-import VotesRepository from '../repositories/Votes';
+import UsersRepository from '../repositories/Users';
 import MainLayout from '../layouts/main.astro';
+import Error from '../components/Error.astro';
 
-const { loggedIn, db, user } = Astro.locals;
+const { loggedIn, baseApiUrl, user } = Astro.locals;
 const storyTypesAndKarmaReqs = {
   'post': 0,
   'ask': 10,
@@ -14,23 +15,22 @@ if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
-const votesRepo = new VotesRepository(db);
+const usersRepo = new UsersRepository(baseApiUrl);
 
-user.karma = await votesRepo.getUserKarma(user.id);
+const updatedUser = await usersRepo.getByUsername(user.username);
+
+Object.assign(user, updatedUser);
 
 const flashError = Astro.cookies.get('flash_error')?.value;
 ---
 <MainLayout
   title="Product Hacker News | Submit a new story"
   headerTitle="Submit"
+  userKarma={user.karma}
   hideNavigation
   hideLogin
 >
-  {flashError && (
-    <div class="flashErrorMsg">
-      {flashError}
-    </div>
-  )}
+  {flashError && <Error>{flashError}</Error>}
   <form action="/stories/new" method="POST" class="newStoryForm">
     <div class="newStoryForm__field">
       <label for="type">type</label>
@@ -65,14 +65,6 @@ const flashError = Astro.cookies.get('flash_error')?.value;
 </MainLayout>
 
 <style>
-  .flashErrorMsg {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-  }
-
   .newStoryForm {
     display: flex;
     flex-direction: column;

@@ -33,9 +33,17 @@ type User = {
   karma?: number;
 };
 
+type Vote = {
+  id: number;
+  user_id: number;
+  story_id: number;
+  weight: number;
+  created_at: string;
+};
+
 declare namespace App {
   interface Locals {
-      db: import('@libsql/client').Client;
+      baseApiUrl: string;
       user?: User;
       loggedIn: boolean;
   }

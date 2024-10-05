@@ -7,8 +7,8 @@ import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 import CommentTimeline from '../../components/CommentTimeline.astro';
 
-const {locals: { user }, params, url } = Astro;
-const storiesRepo = new StoriesRepository();
+const { locals: { user, baseApiUrl }, params, url } = Astro;
+const storiesRepo = new StoriesRepository(baseApiUrl);
 const id = parseInt(params.slug.split('/')[0], 10);
 
 const story = await storiesRepo.getById(id);

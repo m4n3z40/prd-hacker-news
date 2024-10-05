@@ -5,14 +5,13 @@ import MainStoryContainer from '../../components/MainStoryContainer.astro';
 import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 
-const { loggedIn } = Astro.locals;
+const { params: { parentID }, locals: { loggedIn, baseApiUrl } } = Astro;
 
 if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
-const storiesRepo = new StoriesRepository();
-const { parentID } = Astro.params;
+const storiesRepo = new StoriesRepository(baseApiUrl);
 
 const parentStory = await storiesRepo.getById(parseInt(parentID, 10));;
 
