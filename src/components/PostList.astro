@@ -40,11 +40,12 @@ const searchParams = new URLSearchParams({ page: (page + 1).toString() });
     <a href={buildPaginationURL(searchParams)}>More</a>
   </div>
 )}
-<style>
+<style define:vars={{ counterStart: (page - 1)*perPage }}>
   .storiesTimeline {
     margin: 0;
     padding: 16px;
     list-style: none;
+    counter-reset: storyItem var(--counterStart);
   }
 
   .storyItem {

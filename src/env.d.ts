@@ -5,6 +5,7 @@ type PostType = 'post' | 'comment' | 'job' | 'ask' | 'show';
 
 type Story = {
   id: number;
+  slug?: string;
   title: string;
   text?: string;
   domain?: string;
@@ -17,6 +18,7 @@ type Story = {
   parent_id?: number;
   root_id?: number;
   root_title?: string;
+  root_slug?: string;
   kids?: number[];
   type: PostType;
   created_at: string;
@@ -31,9 +33,17 @@ type User = {
   karma?: number;
 };
 
+type Vote = {
+  id: number;
+  user_id: number;
+  story_id: number;
+  weight: number;
+  created_at: string;
+};
+
 declare namespace App {
   interface Locals {
-      db: import('@libsql/client').Client;
+      baseApiUrl: string;
       user?: User;
       loggedIn: boolean;
   }

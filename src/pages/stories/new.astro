@@ -1,15 +1,14 @@
 ---
-import slugify from 'slugify';
 import StoriesRepository from "../../repositories/Stories";
 
-const { loggedIn, db, user } = Astro.locals;
+const { loggedIn, user, baseApiUrl } = Astro.locals;
 
 if (!loggedIn) {
   return Astro.redirect('/login', 302);
 }
 
 try {
-  const storiesRepo = new StoriesRepository(db);
+  const storiesRepo = new StoriesRepository(baseApiUrl);
   const from = Astro.url.searchParams.get('from');
 
   const formData = await Astro.request.formData();
@@ -18,10 +17,10 @@ try {
   const url = formData.get('url') as string;
   const text = formData.get('text') as string;
   const type = formData.get('type') as string as PostType || 'post';
-  const parentID = parseInt(formData.get('parentId') as string, 10) || null;
+  const parentID = parseInt(formData.get('parentId') as string, 10) || undefined;
 
-  const story = await storiesRepo.create({
-    title: title || '',
+  const newStory = await storiesRepo.create({
+    title,
     url,
     text,
     type,
@@ -29,7 +28,7 @@ try {
     parent_id: parentID,
   } as Story);
 
-  return Astro.redirect(from || `/stories/${story.id}/${slugify(story.title, { lower: true, strict: true })}`);
+  return Astro.redirect(from || `/stories/${newStory.id}/${newStory.slug}`);
 } catch (error) {
   console.error(error);
 

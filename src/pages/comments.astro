@@ -1,21 +1,14 @@
 ---
-import slugify from 'slugify';
 import StoriesRepository from '../repositories/Stories';
 import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostList from '../components/PostList.astro';
 
-const { db } = Astro.locals;
-const storiesRepo = new StoriesRepository(db);
+const storiesRepo = new StoriesRepository(Astro.locals.baseApiUrl);
 const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
 const perPage = 30;
-let comments:Story[] = [];
 
-const totalCount = await storiesRepo.countAll({ type: 'comment' });
-
-if (totalCount > 0) {
-  comments = await storiesRepo.getAllComments({ page, perPage });
-}
+const { stories: comments, meta } = await storiesRepo.getAllComments({ page, perPage });
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---
@@ -25,9 +18,9 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
     items={comments}
     page={page}
     perPage={perPage}
-    totalCount={totalCount}
+    totalCount={meta.total}
     buildPostSummaryProps={story => ({
-        path: `/stories/${story.root_id}/${slugify(story.root_title, { lower: true, strict: true })}`,
+        path: `/stories/${story.root_id}/${story.root_slug}`,
         parentStoryID: story.parent_id,
         showText: true,
         showRootTitle: true,

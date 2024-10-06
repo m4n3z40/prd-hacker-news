@@ -7,28 +7,15 @@ import PostSummary from '../../components/PostSummary.astro';
 import CommentForm from '../../components/CommentForm.astro';
 import CommentTimeline from '../../components/CommentTimeline.astro';
 
-const {locals: { db, user }, params, url } = Astro;
-const storiesRepo = new StoriesRepository(db);
+const { locals: { user, baseApiUrl }, params, url } = Astro;
+const storiesRepo = new StoriesRepository(baseApiUrl);
 const id = parseInt(params.slug.split('/')[0], 10);
 
 const story = await storiesRepo.getById(id);
 
-const comments = await storiesRepo.getDescendantsByParentId(id);
+const { stories, rootKids } = await storiesRepo.getDescendantsByParentId(id);
 
-const storiesDB = comments
-  .concat([story])
-  .reduce((acc, story, _, allComments) => {
-    story.kids = allComments.reduce((acc, comment) => {
-      if (comment.parent_id === story.id) {
-        acc.push(comment.id);
-      }
-      return acc;
-    }, []);
-    acc[story.id] = story;
-    return acc;
-  }, {});
-
-story.descendants = comments.length;
+stories[story.id] = story;
 
 const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
 ---
@@ -54,22 +41,22 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
       "interactionType": "https://schema.org/DislikeAction",
       "userInteractionCount": story.score * -1
     },
-    "comment": comments.map(comment => ({
+    "comment": rootKids.map(id => ({
       "@type": "Comment",
-      "text": comment.text,
+      "text": stories[id].text,
       "author": {
         "@type": "Person",
-        "name": comment.by
+        "name": stories[id].by
       },
-      "datePublished": new Date(comment.created_at + '.000Z').toISOString(),
-      "interactionStatistic": comment.score >= 0 ? {
+      "datePublished": new Date(stories[id].created_at + '.000Z').toISOString(),
+      "interactionStatistic": stories[id].score >= 0 ? {
         "@type": "InteractionCounter",
         "interactionType": "https://schema.org/LikeAction",
-        "userInteractionCount": comment.score
+        "userInteractionCount": stories[id].score
       } : {
         "@type": "InteractionCounter",
         "interactionType": "https://schema.org/DislikeAction",
-        "userInteractionCount": comment.score * -1
+        "userInteractionCount": stories[id].score * -1
       }
     }))
   })}></script>
@@ -77,6 +64,6 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
   <MainStoryContainer>
     <PostSummary story={story} titleEl="h1" showText />
     {user ? <CommentForm parentID={story.id} rootID={story.id} /> : null}
-    <CommentTimeline items={story.kids ?? []} getItem={id => storiesDB[id]} />
+    <CommentTimeline items={story.kids ?? []} getItem={id => stories[id]} />
   </MainStoryContainer>
 </MainLayout>

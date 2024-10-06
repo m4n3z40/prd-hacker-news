@@ -4,22 +4,18 @@ import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
 import PostList from '../components/PostList.astro';
 
-const { db } = Astro.locals;
-const storiesRepo = new StoriesRepository(db);
-const by = Astro.url.searchParams.get('user');
-const domain = Astro.url.searchParams.get('site');
-const q = Astro.url.searchParams.get('q');
-const page = parseInt(Astro.url.searchParams.get('page') || '1', 10);
+const { locals, url, cookies } = Astro;
+
+const storiesRepo = new StoriesRepository(locals.baseApiUrl);
+const by = url.searchParams.get('user');
+const domain = url.searchParams.get('site');
+const q = url.searchParams.get('q');
+const page = parseInt(url.searchParams.get('page') || '1', 10);
 const perPage = 30;
-let stories:Story[] = [];
 
-const totalCount = await storiesRepo.countAll({ by, domain, title: q });
+const { stories, meta } = await storiesRepo.getAll({ by, domain, title: q, page, perPage });
 
-if (totalCount > 0) {
-  stories = await storiesRepo.getAll({ by, domain, title: q, page, perPage });
-}
-
-const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
+const flashErrorVote = cookies.get('flash_error_vote')?.value;
 ---
 <MainLayout title={`Product Hacker News | Search results for "${q}"`}>
   {flashErrorVote && <Error>{flashErrorVote}</Error>}
@@ -27,12 +23,12 @@ const flashErrorVote = Astro.cookies.get('flash_error_vote')?.value;
     items={stories}
     page={page}
     perPage={perPage}
-    totalCount={totalCount}
+    totalCount={meta.total}
     buildPaginationURL={searchParams => {
       searchParams.set('q', q);
       searchParams.set('user', by);
       searchParams.set('site', domain);
-      const url = new URL('/');
+      const url = new URL(Astro.url.pathname, Astro.url.origin);
       url.search = searchParams.toString();
       return url.href;
     }}
