@@ -2,6 +2,7 @@
 import UsersRepository from '../repositories/Users';
 import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
+import Button from '../components/Button.astro';
 
 const { loggedIn, baseApiUrl, user } = Astro.locals;
 const storyTypesAndKarmaReqs = {
@@ -54,7 +55,7 @@ const flashError = Astro.cookies.get('flash_error')?.value;
       <textarea name="text" id="text" rows="4" cols="49"></textarea>
     </div>
     <div class="newStoryForm__submit">
-      <button type="submit">submit</button>
+      <Button type="submit">submit</Button>
     </div>
   </form>
   <footer class="newStoryInstructions">
@@ -85,7 +86,7 @@ const flashError = Astro.cookies.get('flash_error')?.value;
 
   .newStoryForm__field > input, .newStoryForm__field > textarea, .newStoryForm__field > select {
     flex: 1;
-    max-width: 90%;
+    max-width: 99%;
     font-size: 16px;
   }
 

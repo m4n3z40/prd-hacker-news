@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import awsAmplify from 'astro-aws-amplify';
-
 import sitemap from '@astrojs/sitemap';
+import icon from 'astro-icon';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,5 +12,5 @@ export default defineConfig({
     ? awsAmplify()
     : (await import('@astrojs/node')).default({ mode: "standalone" }),
 
-  integrations: [sitemap()]
+  integrations: [sitemap(), icon()]
 });

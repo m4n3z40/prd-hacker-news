@@ -1,5 +1,6 @@
 ---
 import { marked } from 'marked';
+import { Icon } from 'astro-icon/components';
 
 export interface Props {
   story: Story;
@@ -44,35 +45,38 @@ const Title = titleEl;
 ---
 <div class="postSummary" id={`post-${story.id}`}>
   <div class:list={['postSummary__header', { 'postSummary__header--noTitle': !story.title }]}>
-    <div class="postSummary__title">
+    <div class="postSummary__votes">
       <a href={`/vote/up/${story.id}?from=${currrentPath}`} class="postSummary__voteLink" data-astro-prefetch="false" rel="nofollow">
         <img src="/arrow.png" alt="Vote up" width="20" height="20">
       </a>
+      <span class:list={['postSummary__score', { 'postSummary__score--positive': story.score > 0, 'postSummary__score--negative': story.score < 0 }]}>
+        {story.score || 0}
+      </span>
+    </div>
+    <div class="postSummary__main">
       {story.title ? (
-        <div class="postSummary__titleWrapper">
+        <div class="postSummary__title">
           <a href={story.url ? story.url : `/stories/${story.id}/${story.slug}`} target={story.url ? '_blank' : '_self'}>
-
-            <Title>{getTitlePrefix(story)}{story.title}{story.url ? <i>↗</i> : null}</Title>
+            <Title>{getTitlePrefix(story)}{story.title}{story.url ? <Icon name="link" /> : null}</Title>
           </a>
           {story.domain ? <a href={`/search?site=${story.domain}`} class="postSummary__domain">({story.domain})</a> : null}
         </div>
       ) : null}
-    </div>
-    <div class="postSummary__meta">
-      {!Number.isNaN(story.score) ? <span>{story.score} {story.score === 1 ? 'point' : 'points'} by</span> : null}
-      <a href={`/users/${story.by}`}>{story.by}</a>
-      <a href={`/stories/${story.id}/${story.slug}`}>{story.time_ago} ago</a>
-      {
-        story.descendants > 0
-          ? <span> | </span><a href={`/stories/${story.id}/${story.slug}`}>{story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
-          : null
-      }
-      {story.type !== 'comment' && story.url ? <span> | </span><a href={`/stories/${story.id}/${story.slug}`}>read post</a>: null}
-      {rootStoryID ? <span> | </span><a href={`${currrentPath}#post-${rootStoryID}`}>root</a> : null}
-      {parentStoryID ? <span> | </span><a href={`${currrentPath}#post-${parentStoryID}`}>parent</a> : null}
-      {showRootTitle && story.root_id && story.root_title ? <span> | on: </span><a href={`/stories/${story.root_id}/${story.root_slug}#post-${story.id}`}>{story.root_title}</a> : null}
-      {prevStoryID ? <span> | </span><a href={`${currrentPath}#post-${prevStoryID}`}>prev</a> : null}
-      {nextStoryID ? <span> | </span><a href={`${currrentPath}#post-${nextStoryID}`}>next</a> : null}
+      <div class="postSummary__meta">
+        <a href={`/users/${story.by}`}><Icon name="user" /> {story.by}</a>
+        <a href={`/stories/${story.id}/${story.slug}`}><Icon name="time" /> {story.time_ago} ago</a>
+        {
+          story.descendants > 0
+            ? <a href={`/stories/${story.id}/${story.slug}`}><Icon name="comments" /> {story.descendants} {story.descendants === 1 ? 'comment' : 'comments'}</a>
+            : null
+        }
+        {story.type !== 'comment' && story.url ? <span> | </span><a href={`/stories/${story.id}/${story.slug}`}>read post</a>: null}
+        {rootStoryID ? <span> | </span><a href={`${currrentPath}#post-${rootStoryID}`}>root</a> : null}
+        {parentStoryID ? <span> | </span><a href={`${currrentPath}#post-${parentStoryID}`}>parent</a> : null}
+        {showRootTitle && story.root_id && story.root_title ? <span> | on: </span><a href={`/stories/${story.root_id}/${story.root_slug}#post-${story.id}`}>{story.root_title}</a> : null}
+        {prevStoryID ? <span> | </span><a href={`${currrentPath}#post-${prevStoryID}`}>prev</a> : null}
+        {nextStoryID ? <span> | </span><a href={`${currrentPath}#post-${nextStoryID}`}>next</a> : null}
+      </div>
     </div>
   </div>
   <div class="postSummary__body">
@@ -86,12 +90,14 @@ const Title = titleEl;
   .postSummary {
   }
 
-  .postSummary__header.postSummary__header--noTitle {
+  .postSummary__header {
     display: flex;
   }
 
-  .postSummary__title {
+  .postSummary__votes {
     display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .postSummary__voteLink {
@@ -100,23 +106,44 @@ const Title = titleEl;
 
   .postSummary__voteLink > img {
     display: block;
-    margin-left: 5px;
+    margin-left: 10px;
   }
 
-  .postSummary__titleWrapper {
-    margin-left: 5px;
+  .postSummary__score {
+    display: block;
+    font-weight: 700;
+    margin-left: 10px;
+    margin-top: 3px;
+    color: #828282;
   }
 
-  .postSummary__titleWrapper a:has(h3):hover h3 {
+  .postSummary__score.postSummary__score--positive {
+    color: #228b22;
+  }
+
+  .postSummary__score.postSummary__score--negative {
+    color: #ff4500;
+  }
+
+  .postSummary__main {
+    margin-left: 5px;
+    display: flex;
+    flex-direction: column;  }
+
+  .postSummary__title {
+
+  }
+
+  .postSummary__title a:has(h3):hover h3 {
     text-decoration: underline;
   }
 
-  .postSummary__titleWrapper h1,
-  .postSummary__titleWrapper h2,
-  .postSummary__titleWrapper h3,
-  .postSummary__titleWrapper h4,
-  .postSummary__titleWrapper h5,
-  .postSummary__titleWrapper h6 {
+  .postSummary__title h1,
+  .postSummary__title h2,
+  .postSummary__title h3,
+  .postSummary__title h4,
+  .postSummary__title h5,
+  .postSummary__title h6 {
     color: #000000;
     margin: 0;
     display: inline-block;
@@ -126,12 +153,12 @@ const Title = titleEl;
     font-weight: normal;
   }
 
-  .postSummary__titleWrapper h1 > i,
-  .postSummary__titleWrapper h2 > i,
-  .postSummary__titleWrapper h3 > i,
-  .postSummary__titleWrapper h4 > i,
-  .postSummary__titleWrapper h5 > i,
-  .postSummary__titleWrapper h6 > i {
+  .postSummary__title h1 > svg,
+  .postSummary__title h2 > svg,
+  .postSummary__title h3 > svg,
+  .postSummary__title h4 > svg,
+  .postSummary__title h5 > svg,
+  .postSummary__title h6 > svg {
     font-size: 12px;
     display: inline-block;
     vertical-align: middle;
@@ -151,27 +178,33 @@ const Title = titleEl;
 
   .postSummary__meta, .postSummary__text, .postSummary__replyLink {
     font-size: 12px;
-    padding-top: 8px;
-    padding-left: 12px;
+    padding-top: 6px;
   }
 
-  .postSummary__title:not(:has(.postSummary__titleWrapper)) {
-    display: inline-block;
+  .postSummary__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
-  .postSummary__title:not(:has(.postSummary__titleWrapper)) + .postSummary__meta {
-    display: inline-block;
+  .postSummary__header.postSummary__header--noTitle .postSummary__meta {
     padding-top: 0;
     padding-left: 0;
+    margin-left: 5px;
   }
 
-  .postSummary__header.postSummary__header--noTitle > .postSummary__meta {
-    margin-left: 5px;
+  .postSummary__meta > a {
+    display: flex;
+    align-items: center;
+    margin: 0 4px;
+  }
+  .postSummary__meta > a > svg {
+    margin-right: 2px;
   }
 
   .postSummary__text {
     font-size: 13px;
-    color: #828282;
+    padding-left: 12px;
   }
 
   :global(.postSummary__text > pre) {
@@ -180,8 +213,11 @@ const Title = titleEl;
     white-space: pre-wrap;
   }
 
+  .postSummary__replyLink {
+    padding-left: 12px;
+  }
+
   .postSummary__replyLink > a {
     font-size: 12px;
   }
 </style>
-

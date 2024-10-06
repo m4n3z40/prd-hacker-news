@@ -1,6 +1,7 @@
 ---
 import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
+import Button from '../components/Button.astro';
 
 if (Astro.locals.loggedIn) {
   return Astro.redirect('/', 302);
@@ -26,7 +27,7 @@ const createAccountFlashError = Astro.cookies.get('flash_error_new_account')?.va
         <input type="password" id="password" name="password" required>
       </div>
       <div class="loginForm__submit formSubmit">
-        <button type="submit">login</button>
+        <Button type="submit">login</Button>
       </div>
     </form>
     <div class="loginForm__forgotPassword">
@@ -46,7 +47,7 @@ const createAccountFlashError = Astro.cookies.get('flash_error_new_account')?.va
         <input type="password" id="create-password" name="password" required>
       </div>
       <div class="createAccountForm__submit formSubmit">
-        <button type="submit">create account</button>
+        <Button type="submit">create account</Button>
       </div>
     </form>
   </section>
@@ -79,6 +80,7 @@ const createAccountFlashError = Astro.cookies.get('flash_error_new_account')?.va
 
   .formSubmit {
     margin-top: 5px;
+    width: 100%;
   }
 
   .formField > label {

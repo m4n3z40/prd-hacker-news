@@ -42,11 +42,10 @@ const { items, getItem, rootID } = Astro.props;
 <style>
   .commentsTimeline {
     list-style-type: none;
-    padding: 0 8px;
+    padding: 0;
   }
 
   .commentItem :global(.postSummary__body) {
-    border-left: 1px solid #e5e5e5;
     margin-left: 6px;
   }
 
@@ -62,5 +61,6 @@ const { items, getItem, rootID } = Astro.props;
   .commentItem > .commentsTimeline {
     padding-left: 18px;
     margin-top: 8px;
+    border-left: 1px dashed #e0e0e0;
   }
 </style>
