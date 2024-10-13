@@ -19,7 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@astrojs/sitemap": "^3.2.0",
-    "astro": "^4.15.11",
+    "astro": "^4.16.2",
     "astro-aws-amplify": "^0.1.0",
     "astro-icon": "^1.1.1",
     "marked": "^14.1.2"

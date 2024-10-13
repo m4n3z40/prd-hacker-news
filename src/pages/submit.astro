@@ -2,6 +2,7 @@
 import UsersRepository from '../repositories/Users';
 import MainLayout from '../layouts/main.astro';
 import Error from '../components/Error.astro';
+import BoxContainer from '../components/BoxContainer.astro';
 import Button from '../components/Button.astro';
 
 const { loggedIn, baseApiUrl, user } = Astro.locals;
@@ -32,45 +33,51 @@ const flashError = Astro.cookies.get('flash_error')?.value;
   hideLogin
 >
   {flashError && <Error>{flashError}</Error>}
-  <form action="/stories/new" method="POST" class="newStoryForm">
-    <div class="newStoryForm__field">
-      <label for="type">type</label>
-      <select name="type" id="type" required>
-        {Object.keys(storyTypesAndKarmaReqs).map(type => (
-          <option value={type} selected={type === 'post'} disabled={user.karma < storyTypesAndKarmaReqs[type]}>
-            {type} ({storyTypesAndKarmaReqs[type]}+ karma required)
-          </option>
-        ))}
-    </div>
-    <div class="newStoryForm__field">
-      <label for="title">title</label>
-      <input type="text" name="title" id="title" required>
-    </div>
-    <div class="newStoryForm__field">
-      <label for="url">url</label>
-      <input type="url" name="url" id="url">
-    </div>
-    <div class="newStoryForm__field">
-      <label for="text">text</label>
-      <textarea name="text" id="text" rows="4" cols="49"></textarea>
-    </div>
-    <div class="newStoryForm__submit">
-      <Button type="submit">submit</Button>
-    </div>
-  </form>
+  <BoxContainer>
+    <form action="/stories/new" method="POST" class="newStoryForm">
+      <div class="newStoryForm__field">
+        <label for="type">type</label>
+        <select name="type" id="type" required>
+          {Object.keys(storyTypesAndKarmaReqs).map(type => (
+            <option value={type} selected={type === 'post'} disabled={user.karma < storyTypesAndKarmaReqs[type]}>
+              {type} ({storyTypesAndKarmaReqs[type]}+ karma required)
+            </option>
+          ))}
+      </div>
+      <div class="newStoryForm__field">
+        <label for="title">title</label>
+        <input type="text" name="title" id="title" required>
+      </div>
+      <div class="newStoryForm__field">
+        <label for="url">url</label>
+        <input type="url" name="url" id="url">
+      </div>
+      <div class="newStoryForm__field">
+        <label for="text">text</label>
+        <textarea name="text" id="text" rows="6" cols="49"></textarea>
+      </div>
+      <div class="newStoryForm__submit">
+        <Button type="submit">submit</Button>
+      </div>
+    </form>
+  </BoxContainer>
   <footer class="newStoryInstructions">
-    Leave url blank to submit a question for discussion.
-    If there is no url, text will appear at the top of the thread.
+    Leave url blank to submit a question for discussion. <br>
+    If there is no url, text will appear at the top of the thread. <br>
     If there is a url, text is optional.
   </footer>
 </MainLayout>
 
 <style>
+  :global(.boxContainer) {
+    width: calc(100% - 64px);
+    margin: 0 auto;
+  }
+
   .newStoryForm {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding: 0 4px;
   }
 
   .newStoryForm__field {
@@ -81,7 +88,7 @@ const flashError = Astro.cookies.get('flash_error')?.value;
 
   .newStoryForm__field > label {
     min-width: fit-content;
-    width: 30px;
+    width: 50px;
   }
 
   .newStoryForm__field > input, .newStoryForm__field > textarea, .newStoryForm__field > select {
@@ -91,7 +98,6 @@ const flashError = Astro.cookies.get('flash_error')?.value;
   }
 
   .newStoryForm__submit {
-    margin-left: 30px;
     margin-top: 5px;
   }
 

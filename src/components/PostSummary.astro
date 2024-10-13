@@ -47,7 +47,7 @@ const Title = titleEl;
   <div class:list={['postSummary__header', { 'postSummary__header--noTitle': !story.title }]}>
     <div class="postSummary__votes">
       <a href={`/vote/up/${story.id}?from=${currrentPath}`} class="postSummary__voteLink" data-astro-prefetch="false" rel="nofollow">
-        <img src="/arrow.png" alt="Vote up" width="20" height="20">
+        <Icon name="arrow-up" />
       </a>
       <span class:list={['postSummary__score', { 'postSummary__score--positive': story.score > 0, 'postSummary__score--negative': story.score < 0 }]}>
         {story.score || 0}
@@ -101,19 +101,27 @@ const Title = titleEl;
   }
 
   .postSummary__voteLink {
-
-  }
-
-  .postSummary__voteLink > img {
     display: block;
     margin-left: 10px;
+    border-radius: 3px;
+    background-color: #fff;
+    transition: background-color 0.2s;
+  }
+
+  .postSummary__voteLink:hover {
+    background: #f6f6f6;
+  }
+
+  .postSummary__voteLink > svg {
+    display: block;
+    width: 24px;
+    height: 24px;
   }
 
   .postSummary__score {
     display: block;
     font-weight: 700;
     margin-left: 10px;
-    margin-top: 3px;
     color: #828282;
   }
 

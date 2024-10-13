@@ -1,6 +1,7 @@
 ---
 import MainLayout from '../../layouts/main.astro';
 import UsersRepository from '../../repositories/Users';
+import BoxContainer from '../../components/BoxContainer.astro';
 
 const { baseApiUrl } = Astro.locals;
 
@@ -18,12 +19,12 @@ const userData = await usersRepo.getByUsername(user.username);
   userKarma={userData.karma}
   hideLogin
 >
-  <section>
+  <BoxContainer el="section">
     <h1>Your Profile</h1>
     <p>Username: {user.username}</p>
     <p>Created: {user.created_at}</p>
     <p>Karma: {userData.karma}</p>
-  </section>
+  </BoxContainer>
 </MainLayout>
 
 <style>
