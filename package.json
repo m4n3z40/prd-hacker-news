@@ -1,6 +1,6 @@
 {
   "name": "prd-hacker-news-2",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Um clone do hacker news com esteroides",
   "main": "index.js",
   "scripts": {
